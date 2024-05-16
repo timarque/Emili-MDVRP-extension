@@ -23,35 +23,35 @@ if __name__ == '__main__':
 
     for name in instance_names:
         test_commands.extend([
-            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 4 fils vnd first cw locmin 2opt 2opt* exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 0",
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 0",
         ])
         test_commands.extend([
-            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 4 fils vnd first cw locmin 2opt 2opt* exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 1",
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 1",
         ])
         test_commands.extend([
-            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 4 fils vnd first cw locmin 2opt 2opt* exchange move iterations 100 rndmv exchange 5 test 100 -it 1200 rnds 2",
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 2",
         ])
-        #test_commands.extend([
-        #    f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange2 exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 3",
-        #])
-        #test_commands.extend([
-        #    f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange2 exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 4",
-        #]) 
         test_commands.extend([
-            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 4 fils vnd first cw locmin 2opt 2opt* exchange move iterations 100 rndmv exchange 5 test 100 -it 1200 rnds 6",
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 3",
         ])
-        #test_commands.extend([
-        #    f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange2 exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 7",
-        #])
-        #test_commands.extend([
-        #    f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange2 exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 9",
-        #])
-        #test_commands.extend([
-        #    f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange2 exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 10",
-        #])
-        #test_commands.extend([
-        #    f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange2 exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 12",
-        #])
+        test_commands.extend([
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 4",
+        ]) 
+        test_commands.extend([
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 6",
+        ])
+        test_commands.extend([
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 7",
+        ])
+        test_commands.extend([
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 9",
+        ])
+        test_commands.extend([
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 10",
+        ])
+        test_commands.extend([
+            f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP 3 fils vnd first cw locmin 2opt 2opt* exchange move iterations 200 rndmv exchange 4 test 100 -it 1200 rnds 12",
+        ])
     
     now = datetime.datetime.now()
     # print(test_commands)
