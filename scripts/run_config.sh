@@ -56,12 +56,12 @@ RUNTIME=$3
 BUDGET=$4
 TRAININGSET=$5
 COMMENT=$6
-G2CODE='/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/grammar2code'
-EMILI_BIN='/home/tagotuga/Emili-MDVRP-extension/build/emili'
-TEMPLATE_DIR='/home/tagotuga/Emili-MDVRP-extension/scripts/templates'
+G2CODE='/home/tmarques/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/grammar2code'
+EMILI_BIN='/home/tmarques/Emili-MDVRP-extension/build/emili'
+TEMPLATE_DIR='/home/tmarques/Emili-MDVRP-extension/scripts/templates'
 DEFAULT_HOOK='hook_run'
 DEFAULT_TARGET='target-runner'
-DEFAULT_TUNE='/home/tagotuga/Emili-MDVRP-extension/scripts/templates/tune-main-cluster-mpi-em'
+DEFAULT_TUNE='/home/tmarques/Emili-MDVRP-extension/scripts/templates/tune-main-cluster-mpi-em'
 RECURSION=1
 FIRST_LEVEL=""
 shift 6
