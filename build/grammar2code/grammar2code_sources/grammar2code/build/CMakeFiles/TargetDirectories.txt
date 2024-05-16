@@ -1,0 +1,5 @@
+/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/CMakeFiles/rebuild_cache.dir
+/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/CMakeFiles/grammar2code.dir
+/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/CMakeFiles/grammar.dir
+/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/CMakeFiles/edit_cache.dir
+/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/CMakeFiles/pugixml.dir

@@ -1,0 +1,106 @@
+	 ______ __  __ _____ _      _____ 
+	|  ____|  \/  |_   _| |    |_   _|
+	| |__  | \  / | | | | |      | |  
+	|  __| | |\/| | | | | |      | |  
+	| |____| |  | |_| |_| |____ _| |_ 
+	|______|_|  |_|_____|______|_____|
+
+commit : 6656abfa8a1bc7c88f3c2722e79628cac8253114
+Random seed : 2
+ number of max depots per customer : 4
+MDVRP
+  ILS that returns a feasible solution if it generates one
+    FIRST IMPROVEMENT VND
+        Clarke and wright initial solution
+        Local minima termination
+        2 opt Neighborhood
+        2 opt* Neighborhood
+        Exchange Neighborhood
+        Move Neighborhood
+      Relaxed local minima termination
+        number of max iterations 100
+      Random move perturbation.
+        Exchange Neighborhood
+        number of moves per perturbation step 5
+      Probabilistic Acceptance. improving solution accepted100 % of the time
+Run time secs : 1200
+The print option is not enabled
+Start time: 2024-05-16 11:35:19
+searching...
+timer set 1200 seconds 
+1085.46
+timer stopped
+time : 10.6914
+iteration counter : 1938902
+Found solution: { 51 4 18 17 37 44 51 } { 51 51 } { 51 51 } { 51 13 41 40 19 42 51 } { 52 24 43 7 23 48 52 } { 52 8 26 31 28 22 1 52 } { 52 46 12 47 52 } { 52 27 6 14 25 52 } { 52 52 } { 53 30 34 50 9 53 } { 53 53 } { 53 49 15 45 33 39 10 53 } { 53 38 11 32 5 53 } { 54 20 3 36 35 54 } { 54 54 } { 54 29 2 16 21 54 } { 54 54 }
+586.770567	 ______ __  __ _____ _      _____ 
+	|  ____|  \/  |_   _| |    |_   _|
+	| |__  | \  / | | | | |      | |  
+	|  __| | |\/| | | | | |      | |  
+	| |____| |  | |_| |_| |____ _| |_ 
+	|______|_|  |_|_____|______|_____|
+
+commit : 6656abfa8a1bc7c88f3c2722e79628cac8253114
+Random seed : 2
+ number of max depots per customer : 4
+MDVRP
+  ILS that returns a feasible solution if it generates one
+    FIRST IMPROVEMENT VND
+        Clarke and wright initial solution
+        Local minima termination
+        2 opt Neighborhood
+        2 opt* Neighborhood
+        Exchange Neighborhood
+        Move Neighborhood
+      Relaxed local minima termination
+        number of max iterations 100
+      Random move perturbation.
+        Exchange Neighborhood
+        number of moves per perturbation step 5
+      Probabilistic Acceptance. improving solution accepted100 % of the time
+Run time secs : 1200
+The print option is not enabled
+Start time: 2024-05-16 11:36:15
+searching...
+timer set 1200 seconds 
+1085.46
+timer stopped
+time : 11.5334
+iteration counter : 1938902
+Found solution: { 51 4 18 17 37 44 51 } { 51 51 } { 51 51 } { 51 13 41 40 19 42 51 } { 52 24 43 7 23 48 52 } { 52 8 26 31 28 22 1 52 } { 52 46 12 47 52 } { 52 27 6 14 25 52 } { 52 52 } { 53 30 34 50 9 53 } { 53 53 } { 53 49 15 45 33 39 10 53 } { 53 38 11 32 5 53 } { 54 20 3 36 35 54 } { 54 54 } { 54 29 2 16 21 54 } { 54 54 }
+586.770567	 ______ __  __ _____ _      _____ 
+	|  ____|  \/  |_   _| |    |_   _|
+	| |__  | \  / | | | | |      | |  
+	|  __| | |\/| | | | | |      | |  
+	| |____| |  | |_| |_| |____ _| |_ 
+	|______|_|  |_|_____|______|_____|
+
+commit : 6656abfa8a1bc7c88f3c2722e79628cac8253114
+Random seed : 2
+ number of max depots per customer : 4
+MDVRP
+  ILS that returns a feasible solution if it generates one
+    FIRST IMPROVEMENT VND
+        Clarke and wright initial solution
+        Local minima termination
+        2 opt Neighborhood
+        2 opt* Neighborhood
+        Exchange Neighborhood
+        Move Neighborhood
+      Relaxed local minima termination
+        number of max iterations 100
+      Random move perturbation.
+        Exchange Neighborhood
+        number of moves per perturbation step 5
+      Probabilistic Acceptance. improving solution accepted100 % of the time
+Run time secs : 1200
+The print option is not enabled
+Start time: 2024-05-16 11:37:17
+searching...
+timer set 1200 seconds 
+1085.46
+timer stopped
+time : 12.1929
+iteration counter : 1938902
+Found solution: { 51 4 18 17 37 44 51 } { 51 51 } { 51 51 } { 51 13 41 40 19 42 51 } { 52 24 43 7 23 48 52 } { 52 8 26 31 28 22 1 52 } { 52 46 12 47 52 } { 52 27 6 14 25 52 } { 52 52 } { 53 30 34 50 9 53 } { 53 53 } { 53 49 15 45 33 39 10 53 } { 53 38 11 32 5 53 } { 54 20 3 36 35 54 } { 54 54 } { 54 29 2 16 21 54 } { 54 54 }
+586.770567

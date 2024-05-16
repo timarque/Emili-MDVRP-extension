@@ -1,0 +1,5 @@
+fils vnd first cw locmin 2opt 2opt* exchange2 exchange move iteration rndmv exchange 5 test 100 -it 1200 rnds 2 
+time : 13.801262
+Objective function value: 924.046062
+Found solution: { 49 49 } { 49 49 } { 49 37 42 46 43 39 9 35 49 } { 50 50 } { 50 50 } { 50 50 } { 51 51 } { 51 1 28 14 4 19 20 33 13 8 5 29 16 51 } { 51 51 } { 51 41 7 22 27 3 6 48 45 11 10 34 32 44 31 36 51 } { 52 2 15 25 23 26 18 17 40 38 12 21 24 47 30 52 } { 52 52 }
+

@@ -1,0 +1,15 @@
+make sure that if we accept worse moves, it is still feasible
+construction heuristic comparison
+Email for meeting for seting up irace on cluster.
+11H for 15a
+
+command working for vns :./emili /home/tagotuga/Emili-MDVRP-extension/instances/pr01.txt MDVRP ils vns best cw locmin move iteration pershake rndmv exchange 10  accng test 100 locmin rndmv exchange 10 test 100
+
+./emili /home/tagotuga/Emili-MDVRP-extension/instances/p12.txt MDVRP ils vnd first cw locmin 2opt* 2opt exchange move iteration rndmv exchange 10 test 100 rnds 9
+./emili /home/tagotuga/Emili-MDVRP-extension/instances/p02.txt MDVRP fils vnd first cw locmin 2opt* 2opt exchange move iteration rndmv exchange 10 test 100 -it 1200 rnds 9 
+f"{PROGRAM} {INSTANCES_DIR}{name}.txt MDVRP fils vnd first cw locmin 2opt 2opt* exchange move iteration rndmv exchange 2 test 100 -it 1200 rnds 3",
+
+check if time is corresponding to time of ils paper, if not check how to add iterations and such.
+
+Coes not taken into account bcos pr01 861 proven to be optimal sol
+sp_impact is when change from one neighborhood to other in vrndmv 

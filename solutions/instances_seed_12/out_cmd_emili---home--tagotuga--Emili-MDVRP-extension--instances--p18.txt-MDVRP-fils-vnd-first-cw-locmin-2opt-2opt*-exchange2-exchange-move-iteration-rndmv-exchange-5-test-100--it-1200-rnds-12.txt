@@ -1,0 +1,32 @@
+	 ______ __  __ _____ _      _____ 
+	|  ____|  \/  |_   _| |    |_   _|
+	| |__  | \  / | | | | |      | |  
+	|  __| | |\/| | | | | |      | |  
+	| |____| |  | |_| |_| |____ _| |_ 
+	|______|_|  |_|_____|______|_____|
+
+commit : 6656abfa8a1bc7c88f3c2722e79628cac8253114
+Random seed : 12
+MDVRP
+  ILS that returns a feasible solution if it generates one
+    FIRST IMPROVEMENT VND
+        Clarke and wright initial solution
+        Local minima termination
+        2 opt Neighborhood
+        2 opt* Neighborhood
+        Exchange 2 Neighborhood
+        Exchange Neighborhood
+        Move Neighborhood
+        number of max iterations 300
+      Random move perturbation.
+        Exchange Neighborhood
+        number of moves per perturbation step 5
+      Probabilistic Acceptance. improving solution accepted100 % of the time
+Run time secs : 1200
+The print option is not enabled
+Start time: 2024-05-14 07:56:21
+searching...
+timer set 1200 seconds 
+CPU time: 1199.72
+iteration counter : 106974381
+3896.579024

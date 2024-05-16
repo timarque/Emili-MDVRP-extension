@@ -1,0 +1,2 @@
+trainInstancesDir <- "/home/tagotuga/Emili-MDVRP-extension/Train_Instances/"
+ maxExperiments <- 728

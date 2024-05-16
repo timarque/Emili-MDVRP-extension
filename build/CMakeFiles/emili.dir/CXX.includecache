@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tagotuga/Emili-MDVRP-extension/emilibase.h
+string
+-
+iostream
+-
+vector
+-
+random
+-
+tr1/random
+-
+functional
+-
+
+/home/tagotuga/Emili-MDVRP-extension/generalParser.cpp
+generalParser.h
+/home/tagotuga/Emili-MDVRP-extension/generalParser.h
+cstdlib
+-
+ctime
+-
+cstring
+-
+iostream
+-
+sstream
+-
+algorithm
+-
+
+/home/tagotuga/Emili-MDVRP-extension/generalParser.h
+emilibase.h
+/home/tagotuga/Emili-MDVRP-extension/emilibase.h
+

@@ -1,0 +1,37 @@
+	 ______ __  __ _____ _      _____ 
+	|  ____|  \/  |_   _| |    |_   _|
+	| |__  | \  / | | | | |      | |  
+	|  __| | |\/| | | | | |      | |  
+	| |____| |  | |_| |_| |____ _| |_ 
+	|______|_|  |_|_____|______|_____|
+
+commit : 6656abfa8a1bc7c88f3c2722e79628cac8253114
+Random seed : 2
+ number of max depots per customer : 4
+MDVRP
+  ILS that returns a feasible solution if it generates one
+    FIRST IMPROVEMENT VND
+        Clarke and wright initial solution
+        Local minima termination
+        2 opt Neighborhood
+        2 opt* Neighborhood
+        Exchange 2 Neighborhood
+        Exchange Neighborhood
+        Move Neighborhood
+      Relaxed local minima termination
+        number of max iterations 100
+      Random move perturbation.
+        Exchange Neighborhood
+        number of moves per perturbation step 5
+      Probabilistic Acceptance. improving solution accepted100 % of the time
+Run time secs : 1200
+The print option is not enabled
+Start time: 2024-05-16 11:26:34
+searching...
+timer set 1200 seconds 
+1085.46
+timer stopped
+time : 13.5285
+iteration counter : 2230370
+Found solution: { 51 44 37 17 18 4 51 } { 51 51 } { 51 51 } { 51 13 41 40 19 42 51 } { 52 32 1 22 28 31 8 52 } { 52 23 24 43 7 26 48 52 } { 52 27 6 14 25 52 } { 52 46 12 47 52 } { 52 52 } { 53 38 11 5 49 53 } { 53 53 } { 53 15 45 33 39 10 53 } { 53 30 34 50 9 53 } { 54 35 36 3 20 54 } { 54 21 16 2 29 54 } { 54 54 } { 54 54 }
+586.074538

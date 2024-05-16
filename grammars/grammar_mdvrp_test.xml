@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<gr:grammar xmlns:gr="grammar">
+    <gr:derivations xmlns:mdvrp="mdvrp_automatic_generation">
+	 <mdvrp:steps type="int" min="0" max="400" stepIfEnumerated="50"/>
+	 <mdvrp:sp_impact type="int" min="1" max="20" stepIfEnumerated="1"/>
+	 <mdvrp:tabutenure_size type="int" min="1" max="20" stepIfEnumerated="1"/>
+	 <mdvrp:random_moves type="int" min="1" max="10" stepIfEnumerated="1"/>
+     <mdvrp:ac_percentage type="int" min="50" max="100" stepIfEnumerated="1"/>
+     <mdvrp:start_temp type="real" min="1" max="5.0" stepIfEnumerated="0.1"/>
+	 <mdvrp:end_temp type="real" min="0" max="1.0" stepIfEnumerated="0.1"/>
+         <mdvrp:temp_ratio type="real" min="0.01" max="0.1" stepIfEnumerated="0.01"/>
+       	 <mdvrp:metro_alpha type="real" min="0.1" max="1" stepIfEnumeraterd="0.1"/>
+	 <mdvrp:tempiterations type="int" min="1" max="500" stepIfEnumerated="1"/>
+	 <mdvrp:nlist type="int" min="1" max="5" stepIfEnumerated="1"/>		
+	
+ 		
+        <mdvrp:initial_solution>
+           <![CDATA[cw ]]>
+        </mdvrp:initial_solution>
+
+	<mdvrp:termination>
+	   <![CDATA[locmin ]]>
+          <!-- <or/>
+	   <![CDATA[soater ]]>-->
+           <or/>
+	   <![CDATA[iterations ]]><mdvrp:steps/><![CDATA[ ]]>
+	</mdvrp:termination>
+
+	<mdvrp:neighborhood>
+	   <![CDATA[exchange ]]>
+	<or/>
+	   <![CDATA[exchange21 ]]>
+	<or/>
+	   <![CDATA[exchange2 ]]>
+	<or/>
+	   <![CDATA[move ]]>
+	<or/>
+	   <![CDATA[move2 ]]>
+	<or/>
+	  <![CDATA[2opt ]]>
+    <or/>
+	  <![CDATA[2opt* ]]>
+	</mdvrp:neighborhood>
+	
+	<mdvrp:neighborhoodmoves>
+	   <![CDATA[exchange ]]>
+	<or/>
+	   <![CDATA[exchange21 ]]>
+	<or/>
+	   <![CDATA[exchange2 ]]>
+	<or/>
+	   <![CDATA[move ]]>
+	<or/>
+	   <![CDATA[move2 ]]>
+	</mdvrp:neighborhoodmoves>
+
+	<mdvrp:pertubation>
+		<![CDATA[rndmv ]]><mdvrp:neighborhoodmoves/><mdvrp:random_moves/><![CDATA[ ]]>
+		<or/>
+		<mdvrp:vrndmv/>
+	</mdvrp:pertubation>
+
+	<mdvrp:vrndmv>
+		<![CDATA[vrndmv ]]><mdvrp:random_moves/><![CDATA[ ]]><mdvrp:sp_impact/><![CDATA[ ]]><mdvrp:neighborhoodmoves/><mdvrp:neighborhoodmoves/>
+	</mdvrp:vrndmv>
+	
+        <mdvrp:acceptance>
+	<!--	<or/>
+		<![CDATA[metropolis ]]><mdvrp:metrotemp/><![CDATA[ ]]> -->
+		<![CDATA[saacc ]]><mdvrp:start_temp/><![CDATA[ ]]><mdvrp:end_temp/><![CDATA[ ]]><mdvrp:temp_ratio/><![CDATA[ ]]><mdvrp:tempiterations/><![CDATA[ ]]><mdvrp:metro_alpha/><![CDATA[ ]]>
+		<or/>
+		<![CDATA[test ]]><mdvrp:ac_percentage/><![CDATA[ ]]>
+
+	</mdvrp:acceptance>	
+
+	<mdvrp:tabutenure>
+	     <![CDATA[moves ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
+         <or/>
+          <![CDATA[solutions ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
+	     <!--<or/>
+	     <![CDATA[tsabm ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
+	     <or/>
+	     <![CDATA[tsabmt ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>-->
+	</mdvrp:tabutenure>
+
+	<mdvrp:rndmove>
+             <![CDATA[rndmv ]]><mdvrp:neighborhood/><mdvrp:random_moves/><![CDATA[ ]]>
+    </mdvrp:rndmove>
+
+	
+    <mdvrp:neighborhoodchanger>
+           <![CDATA[accng ]]><mdvrp:acceptance/>
+    </mdvrp:neighborhoodchanger>
+
+	<mdvrp:first>
+           <![CDATA[first ]]>
+		  <mdvrp:initial_solution/>
+          	  <mdvrp:termination/>
+  		  <mdvrp:neighborhood/>
+	</mdvrp:first>
+
+	<mdvrp:ils>
+		<![CDATA[ fils ]]>
+		<mdvrp:ilsalgos/>
+		<mdvrp:termination/>
+		<mdvrp:pertubation/>
+		<mdvrp:acceptance/>
+	</mdvrp:ils>
+	
+
+	<mdvrp:tabuf>
+           <![CDATA[tabu first ]]>
+              	<mdvrp:initial_solution/>
+        	<mdvrp:termination/>
+		<mdvrp:neighborhood/>
+		<mdvrp:tabutenure/>
+	</mdvrp:tabuf>
+
+
+	<mdvrp:vnd4>
+           <![CDATA[vnd ]]>
+		<mdvrp:vnds/>
+		<mdvrp:initial_solution/>
+		<mdvrp:termination/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+	</mdvrp:vnd4>
+
+	<mdvrp:vnd5>
+           <![CDATA[vnd ]]>
+		<mdvrp:vnds/>
+		<mdvrp:initial_solution/>
+		<mdvrp:termination/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+	</mdvrp:vnd5>
+
+	<mdvrp:vnd6>
+           <![CDATA[vnd ]]>
+		<mdvrp:vnds/>
+		<mdvrp:initial_solution/>
+		<mdvrp:termination/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+	</mdvrp:vnd6>
+
+	<mdvrp:vnd7>
+           <![CDATA[vnd ]]>
+		<mdvrp:vnds/>
+		<mdvrp:initial_solution/>
+		<mdvrp:termination/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+		<mdvrp:neighborhood/>
+	</mdvrp:vnd7>
+
+	<mdvrp:vnds>
+		<![CDATA[first ]]>
+	</mdvrp:vnds>
+
+
+	<mdvrp:ilsalgos>
+		<mdvrp:first/>
+		<or/>
+		<mdvrp:ils/>
+		<or/>
+		<mdvrp:vnd4/>
+		<or/>
+		<mdvrp:vnd5/>
+		<or/>
+		<mdvrp:vnd6/>
+		<or/>
+		<mdvrp:vnd7/>
+		<or/>
+		<mdvrp:tabuf/>
+	</mdvrp:ilsalgos>
+	
+
+	<mdvrp:main>
+	        <!--<mdvrp:gls/>
+	        <or/>-->
+		<mdvrp:ils/>
+	</mdvrp:main>
+
+
+
+        <mdvrp:main_algorithm output="params">
+
+            	<![CDATA[MDVRP ]]>
+			<mdvrp:nlist/>
+        	<mdvrp:main/>     
+			<![CDATA[-it 300]]>
+        </mdvrp:main_algorithm>
+
+    </gr:derivations>
+</gr:grammar>
