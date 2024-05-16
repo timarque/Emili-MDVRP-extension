@@ -34,7 +34,7 @@ shift 4
 PARAMS=$*
 
 # Number of retries in case of error
-TRIES=3
+TRIES=0
 # Default output, normally null
 OUTPUT="/dev/null"
 # Grammar2code path
