@@ -78,7 +78,7 @@
          <or/>
           <![CDATA[solutions ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
 		 <or/>
-          <![CDATA[values ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
+          <![CDATA[value ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
 	     <!--<or/>
 	     <![CDATA[tsabm ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
 	     <or/>
