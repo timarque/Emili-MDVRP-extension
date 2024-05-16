@@ -1,2 +1,5 @@
-trainInstancesDir <- "/home/tagotuga/Emili-MDVRP-extension/Train_Instances/"
+execDir = "./"
+parameterFile = "./parameters.txt"
+trainInstancesDir <- "/home/tmarques/Emili-MDVRP-extension/Train_Instances/"
  maxExperiments <- 728
+elitist = 1
