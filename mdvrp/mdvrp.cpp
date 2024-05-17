@@ -370,7 +370,7 @@ void notyet()
             }
           }
         }
-        if (!cust1_found && !cust2_found){
+                if (!cust1_found && !cust2_found){
           bool timed = false;
           bool cont = false;
           demands = demand[customer1 - 1] + demand[customer2 - 1];
@@ -436,6 +436,23 @@ void notyet()
                 loads[routeindex1] = total_demand;
               }
           }
+          }else if (index1 == 1){
+            if(timed && cont){
+            demands = demand[customer2 - 1];
+            int total_demand = demands + loads[routeindex1];
+            if (total_demand < maxcap){
+              routes[routeindex1].insert(routes[routeindex1].begin() + 1, customer2);
+              loads[routeindex1] = total_demand;
+              durations[routeindex1] = times;
+            }
+          }else if ( !timed ){
+              demands = demand[customer2 - 1];
+              int total_demand = demands + loads[routeindex1];
+              if (total_demand < maxcap){
+                routes[routeindex1].insert(routes[routeindex1].begin() + 1, customer2);
+                loads[routeindex1] = total_demand;
+              }
+          }
           }
         }else if (!cust1_found && cust2_found){
           bool timed = false;
@@ -448,7 +465,24 @@ void notyet()
               cont = true;
             }
           }
-          if (index2 == 1){
+          if (index2 == routes[routeindex2].size() -1){
+            if(timed && cont){
+            demands = demand[customer1 - 1];
+            int total_demand = demands + loads[routeindex2];
+            if (total_demand < maxcap){
+              routes[routeindex2].push_back(customer1);
+              loads[routeindex2] = total_demand;
+              durations[routeindex2] = times;
+            }
+          }else if ( !timed ){
+              demands = demand[customer1 - 1];
+              int total_demand = demands + loads[routeindex2];
+              if (total_demand < maxcap){
+                routes[routeindex2].push_back(customer1);
+                loads[routeindex2] = total_demand;
+              }
+          }
+          }else if (index2 == 1){
             if(timed && cont){
             demands = demand[customer1 - 1];
             int total_demand = demands + loads[routeindex2];
