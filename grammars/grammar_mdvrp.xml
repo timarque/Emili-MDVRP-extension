@@ -3,7 +3,7 @@
 
 <gr:grammar xmlns:gr="grammar">
     <gr:derivations xmlns:mdvrp="mdvrp_automatic_generation">
-	 <mdvrp:steps type="int" min="0" max="100" stepIfEnumerated="1"/>
+	 <mdvrp:steps type="int" min="0" max="500" stepIfEnumerated="1"/>
 	 <mdvrp:sp_impact type="int" min="1" max="20" stepIfEnumerated="1"/>
 	 <mdvrp:tabutenure_size type="int" min="3" max="20" stepIfEnumerated="1"/>
 	 <mdvrp:random_moves type="int" min="1" max="15" stepIfEnumerated="1"/>
