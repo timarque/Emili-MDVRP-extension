@@ -38,17 +38,17 @@ TRIES=0
 # Default output, normally null
 OUTPUT="/dev/null"
 # Grammar2code path
-GRAMMAR2CODE="/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/grammar2code"
+GRAMMAR2CODE="/home/tmarques/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/grammar2code"
 # Grammar file location
-GRAMMAR_DIR='/home/tagotuga/Emili-MDVRP-extension/grammars/grammar_mdvrp.xml'
+GRAMMAR_DIR='/home/tmarques/Emili-MDVRP-extension/grammars/grammar_mdvrp.xml'
 # Error output file location
-ERR_OUT='/home/tagotuga/Emili-MDVRP-extension/scripts/test/ERROR'
+ERR_OUT='/home/tmarques/Emili-MDVRP-extension/scripts/test/ERROR'
 # General emili timer
-TIMER_SETTING='-it 6000'
+TIMER_SETTING='-it 1200'
 # Machine id if running in a cluster
 HOST_NAME=`hostname`
 # EMILI bin location
-EMILI_BIN='/home/tagotuga/Emili-MDVRP-extension/build/emili'
+EMILI_BIN='/home/tmarques/Emili-MDVRP-extension/build/emili'
 
 # Setup work dir for the experiment
 BUILD_DIR=`mktemp -d`

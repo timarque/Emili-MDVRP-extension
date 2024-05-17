@@ -16,7 +16,7 @@ then
 else
 
 OUTPUT="/dev/null"
-GRAMMAR2CODE="/home/tmarques/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/grammar2code"
+GRAMMAR2CODE="/home/tagotuga/Emili-MDVRP-extension/build/grammar2code/grammar2code_sources/grammar2code/build/grammar2code"
 
 FILENAME="$2"
 GRAMMAR_DIR="$1"

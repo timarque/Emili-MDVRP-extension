@@ -1,5 +1,8 @@
 execDir = "./"
-parameterFile = "./parameters.txt"
-trainInstancesDir <- "/home/tmarques/Emili-MDVRP-extension/Train_Instances/"
+# parameterFile = "./parameters.txt"
+trainInstancesDir <- "/home/tmarques/Emili-MDVRP-extension/Train_Instances"
+targetRunner = "./target-runner"
+
  maxExperiments <- 728
+
 elitist = 1
