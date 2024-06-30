@@ -762,19 +762,18 @@ emili::LocalSearch* prs::EmBaseBuilder::buildAlgo()
             std::vector<emili::Neighborhood*> nes = buildNeighborhoodVector();
             if(best == 1)
             {
-                ls =  new emili::VNDSearch<emili::BestImprovementSearch>(*in,*te,nes);
+                ls =  new emili::VNDSearch<emili::BestImprovementSearch>(*in,*te,nes, getSeed(tm));
             }
             else if (best == 0)
             {
-                 ls =  new emili::VNDSearch<emili::FirstImprovementSearch>(*in,*te,nes);
+                 ls =  new emili::VNDSearch<emili::FirstImprovementSearch>(*in,*te,nes, getSeed(tm));
             }else if (best == 2)
             {
-                 ls =  new emili::VNDSearch<emili::FeasibleBestImprovementSearch>(*in,*te,nes);
+                 ls =  new emili::VNDSearch<emili::FeasibleBestImprovementSearch>(*in,*te,nes, getSeed(tm));
                                   
             }else if (best == 3)
             {
-                 ls =  new emili::VNDSearch<emili::FeasibleFirstImprovementSearch>(*in,*te,nes);
-                 
+                 ls =  new emili::VNDSearch<emili::FeasibleFirstImprovementSearch>(*in,*te,nes, getSeed(tm));
             }
 
         }

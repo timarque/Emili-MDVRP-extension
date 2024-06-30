@@ -1358,12 +1358,17 @@ class VNDSearch: public T
 {
 protected:
     std::vector < emili::Neighborhood* > neigh;
+    std::default_random_engine engine;
 public:
-    VNDSearch(emili::InitialSolution& is, emili::Termination& tc, std::vector< emili::Neighborhood* > n):T(is,tc,*n[0]),neigh(n) { }
-    VNDSearch(T& ls, std::vector<emili::Neighborhood*> n):T(ls),neigh(n) { }
+    VNDSearch(emili::InitialSolution& is, emili::Termination& tc, std::vector< emili::Neighborhood* > n, int eng):T(is,tc,*n[0]),neigh(n), engine(eng) { }
+    VNDSearch(T& ls, std::vector<emili::Neighborhood*> n, int eng):T(ls),neigh(n), engine(eng) { }
     virtual emili::Solution* search(emili::Solution *initial)
     {
-
+        for (size_t i = neigh.size() - 1; i > 0; --i) {
+            std::uniform_int_distribution<size_t> distribution(0, i);
+            size_t j = distribution(engine);
+            std::swap(neigh[i], neigh[j]);
+        }
         this->neighbh = neigh[0];
         Solution* incumbent = T::search(initial);
         int i = 0;

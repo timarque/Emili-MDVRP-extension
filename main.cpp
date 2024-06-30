@@ -108,12 +108,6 @@ int main(int argc, char *argv[])
     //std::cout << ls << std::endl;
     if(ls!=nullptr)
     {
-        std::chrono::high_resolution_clock::time_point start_time = std::chrono::high_resolution_clock::now(); // Start timer
-        auto now = std::chrono::system_clock::now();
-        std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
-        char buffer[80];
-        std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", std::localtime(&currentTime)); // this is just to know when it started so i can better track for how long it has been running
-        std::cout << "Start time: " << buffer << std::endl;
         pls = ls->getSearchTime();//ps.ils_time;
         emili::Solution* solution;
         std::cout << "searching..." << std::endl;
