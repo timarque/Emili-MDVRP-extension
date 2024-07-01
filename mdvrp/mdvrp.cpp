@@ -67,14 +67,13 @@ void notyet()
       }
 
       double emili::mdvrp::Mdvrp::computeObjectiveFunction(std::vector<int>& sol){
-        std::vector<std::vector<double>>& distancematrix = instance.getDistanceMatrix();
-        std::vector<int>& depots = instance.getdepots();
+        std::vector<std::vector<double>> distancematrix = instance.getDistanceMatrix();
         std::vector<double> route_costs;
         double route_cost = 0.0;
+        std::vector<int> depots = instance.getdepots();
         bool end_depot = false;
-        int nb_cust = instance.getnbCustomers();
         for (int i = 0; i < sol.size(); i++){
-          if (sol[i] > nb_cust){
+          if (sol[i] > instance.getnbCustomers()){
             if (!end_depot){
               end_depot = true;
               route_cost += distancematrix[sol[i] - 1][sol[i+1] - 1];
@@ -91,7 +90,7 @@ void notyet()
         for (int z = 0; z < route_costs.size(); z++){
           total += route_costs[z];
         }
-        
+        // CHECK IF THIS IS CORRECT, probably do by hand with distance matrix, not sure at all this is right
         return total;
       }
  
@@ -219,19 +218,20 @@ void notyet()
     // this is random initial solution
     emili::Solution* emili::mdvrp::MdvrpRandomInitialSolution::generate() 
     {
-    std::vector<int> solution; 
-    const std::vector<int>& depots = pis.getdepots();
+    std::vector<int> solution;
+    srand(time(0)); // Seed the random number generator
+    std::vector<int> depots = pis.getdepots();
     solution.push_back(depots[0]);
-    std::vector<int>& use = pis.getcustomers(); 
+    std::vector<int> use = pis.getcustomers(); // check this if error, may be caused by this
     bool done = false;
     int cap = 0, routeduration = 0;
     int counter = 0;
     bool skip = false;
-    const std::vector<int>& demand = pis.getdemand();
-    const int max_c = pis.getmaxCapacity();
-    const int max_d = pis.getmaxDuration();
-    const std::vector<int>& durations = pis.getserviceDuration();
-    const std::vector<std::vector<double>>& distancemat = pis.getdistanceMatrix();
+    std::vector<int> demand = pis.getdemand();
+    int max_c = pis.getmaxCapacity();
+    int max_d = pis.getmaxDuration();
+    std::vector<int> durations = pis.getserviceDuration();
+    std::vector<std::vector<double>> distancemat = pis.getdistanceMatrix();
     while (!done){
         int v1 = rand() % use.size();
         cap += demand[use[v1] - 1];
@@ -287,10 +287,14 @@ void notyet()
     }
     double value = pis.computeObjectiveFunction(final_sol);
     pis.setInit_sol_cost(value);
-    std::cout << value << std::endl;
     SolutionMdvrp* s = new SolutionMdvrp(value, final_sol);
     return s;
     }
+
+    bool compareSecond(const std::pair<int, double> &a, const std::pair<int, double> &b) {
+      return a.second < b.second;
+    }
+
 
 
 
@@ -299,19 +303,19 @@ void notyet()
       
     std::vector<int> solution;
     std::vector<std::vector<int>> depotforcust(pis.getnbDepots()); // vector[0] will contain vector of customers who are clostest to depot 1(0) etc
-    const std::vector<std::vector<double>>& distanceMat = pis.getdistanceMatrix(); 
-    const std::vector<int>& customers = pis.getcustomers();
-    const std::vector<int>& demand = pis.getdemand();
-    const int nb_customers = pis.getnbCustomers();
-    const int nb_depots = pis.getnbDepots();
+    std::vector<std::vector<double>> distanceMat = pis.getdistanceMatrix(); 
+    std::vector<int> customers = pis.getcustomers();
+    std::vector<int> demand = pis.getdemand();
+    int nb_customers = pis.getnbCustomers();
+    int nb_depots = pis.getnbDepots();
     int total = nb_customers + nb_depots;
     int closest_depot;
     double min_distance;
-    const int maxcap = pis.getmaxCapacity();
-    const int max_time = pis.getmaxDuration();
-    const std::vector<int>& service_times = pis.getserviceDuration();
+    int maxcap = pis.getmaxCapacity();
+    int max_time = pis.getmaxDuration();
+    std::vector<int> service_times = pis.getserviceDuration();
     // assign customers to nearest depot
-    for (int i = 0; i < nb_customers; i ++){
+    for (int i = 0; i < customers.size(); i ++){
       closest_depot = 0;
       min_distance = distanceMat[i][nb_customers];
       for (int j = nb_customers + 1; j < total; j ++){
@@ -323,7 +327,7 @@ void notyet()
       depotforcust[closest_depot].push_back(customers[i]);
     }
     double savings;
-    const std::vector<int>& depots = pis.getdepots();
+    std::vector<int> depots = pis.getdepots();
     std::vector<std::vector<int>> final_routes;
     for (int z = 0; z < depotforcust.size(); z ++){
       std::vector<std::pair<double, std::pair<int, int>>> savingsMatrix;
@@ -366,7 +370,7 @@ void notyet()
             }
           }
         }
-                if (!cust1_found && !cust2_found){
+        if (!cust1_found && !cust2_found){
           bool timed = false;
           bool cont = false;
           demands = demand[customer1 - 1] + demand[customer2 - 1];
@@ -432,23 +436,6 @@ void notyet()
                 loads[routeindex1] = total_demand;
               }
           }
-          }else if (index1 == 1){
-            if(timed && cont){
-            demands = demand[customer2 - 1];
-            int total_demand = demands + loads[routeindex1];
-            if (total_demand < maxcap){
-              routes[routeindex1].insert(routes[routeindex1].begin() + 1, customer2);
-              loads[routeindex1] = total_demand;
-              durations[routeindex1] = times;
-            }
-          }else if ( !timed ){
-              demands = demand[customer2 - 1];
-              int total_demand = demands + loads[routeindex1];
-              if (total_demand < maxcap){
-                routes[routeindex1].insert(routes[routeindex1].begin() + 1, customer2);
-                loads[routeindex1] = total_demand;
-              }
-          }
           }
         }else if (!cust1_found && cust2_found){
           bool timed = false;
@@ -461,24 +448,7 @@ void notyet()
               cont = true;
             }
           }
-          if (index2 == routes[routeindex2].size() -1){
-            if(timed && cont){
-            demands = demand[customer1 - 1];
-            int total_demand = demands + loads[routeindex2];
-            if (total_demand < maxcap){
-              routes[routeindex2].push_back(customer1);
-              loads[routeindex2] = total_demand;
-              durations[routeindex2] = times;
-            }
-          }else if ( !timed ){
-              demands = demand[customer1 - 1];
-              int total_demand = demands + loads[routeindex2];
-              if (total_demand < maxcap){
-                routes[routeindex2].push_back(customer1);
-                loads[routeindex2] = total_demand;
-              }
-          }
-          }else if (index2 == 1){
+          if (index2 == 1){
             if(timed && cont){
             demands = demand[customer1 - 1];
             int total_demand = demands + loads[routeindex2];
@@ -547,138 +517,64 @@ void notyet()
     }
  
    
-// bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol, int yes, int no){
-//       // capacity and time constraints check
-//       int route_cap = 0;
-//       double service_time = 0.0;
-//       int current_depot = 0;
-//       bool observed_depot = false;
-//       bool correct = true;
-//       const std::vector<std::vector<double>>& distancemat = pis.getdistanceMatrix();
-//       const std::vector<int> demands = pis.getdemand();
-//       const int max_time = pis.getmaxDuration();
-//       const int customers = pis.getnbCustomers();
-//       const int max_cap = pis.getmaxCapacity();
-//       while (sol[yes] <= customers){
-//         yes --;
-//       }
-//       while (sol[yes] > customers && sol[yes+1] > customers){
-//         yes ++;
-//       }
-//       while (sol[no] <= customers){
-//         no ++;
-//       }
-//       no++;
-//       no = std::min(no, static_cast<int>(sol.size()));
-//       if (max_time > 0){
-//         const std::vector<int>& durations = pis.getserviceDuration();
-//         for (int i = yes; i < no; i++){
-//           if (sol[i] > customers){
-//             if (observed_depot){
-//               observed_depot = false;
-//               service_time += distancemat[sol[i - 1] - 1][sol[i] - 1];
-//               if (route_cap > max_cap || service_time > max_time){
-//                 correct = false;
-//                 break; 
-//               }else{
-//                 route_cap = 0;
-//                 service_time = 0;
-//               }
-//             }else{
-//               current_depot = sol[i];
-//               observed_depot = true;
-//             }
-//           }else{
-//             route_cap += demands[sol[i] - 1];
-//             service_time += distancemat[sol[i - 1] - 1][sol[i] - 1]; 
-//             service_time += durations[sol[i] - 1];
-//           }
-//         }
-//       }else{
-//         for (int i = yes; i < no; i++){
-//           if (sol[i] > customers){
-//             if (observed_depot){
-//               observed_depot = false;
-//               if (route_cap > max_cap){
-//                 correct = false;
-//                 break; 
-//               }else{
-//                 route_cap = 0;
-//                 service_time = 0;
-//               }
-//             }else{
-//               current_depot = sol[i];
-//               observed_depot = true;
-//             }
-//           }else{
-//             route_cap += demands[sol[i] - 1];
-//           }
-//         }
-//       }
-//       return correct;
-//     }
-
-
 bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
-      // Store the frequently accessed values in local variables
-    const std::vector<std::vector<double>>& distancemat = pis.getdistanceMatrix();
-    const std::vector<int>& demands = pis.getdemand();
-    const int max_time = pis.getmaxDuration();
-    const int max_capacity = pis.getmaxCapacity();
-    int route_cap = 0;
-    double service_time = 0.0;
-    int current_depot = 0;
-    bool observed_depot = false;
-    bool correct = true;
-
-    if (max_time > 0) {
-        const std::vector<int>& durations = pis.getserviceDuration();
-        for (int i = 0; i < sol.size(); i++) {
-            if (sol[i] > nb_cust) {
-                if (observed_depot) {
-                    observed_depot = false;
-                    service_time += distancemat[sol[i - 1] - 1][sol[i] - 1];
-                    if (route_cap > max_capacity || service_time > max_time) {
-                        correct = false;
-                        break;
-                    } else {
-                        route_cap = 0;
-                        service_time = 0;
-                    }
-                } else {
-                    current_depot = sol[i];
-                    observed_depot = true;
-                }
-            } else {
-                route_cap += demands[sol[i] - 1];
-                service_time += distancemat[sol[i - 1] - 1][sol[i] - 1];
-                service_time += durations[sol[i] - 1];
+      // capacity and time constraints check
+      int route_cap = 0;
+      double service_time = 0.0;
+      int current_depot = 0;
+      bool observed_depot = false;
+      bool correct = true;
+      std::vector<std::vector<double>>& distancemat = pis.getdistanceMatrix();
+      std::vector<int> demands = pis.getdemand();
+      int max_time = pis.getmaxDuration();
+      if (max_time > 0){
+        std::vector<int> durations = pis.getserviceDuration();
+        for (int i = 0; i < sol.size(); i++){
+          if (sol[i] > pis.getnbCustomers()){
+            if (observed_depot){
+              observed_depot = false;
+              service_time += distancemat[sol[i - 1] - 1][sol[i] - 1];
+              if (route_cap > pis.getmaxCapacity() || service_time > max_time){
+                correct = false;
+                break; 
+              }else{
+                route_cap = 0;
+                service_time = 0;
+              }
+            }else{
+              current_depot = sol[i];
+              observed_depot = true;
             }
+          }else{
+            route_cap += demands[sol[i] - 1];
+            service_time += distancemat[sol[i - 1] - 1][sol[i] - 1]; 
+            service_time += durations[sol[i] - 1];
+          }
         }
-    } else {
-        for (int i = 0; i < sol.size(); i++) {
-            if (sol[i] > nb_cust) {
-                if (observed_depot) {
-                    observed_depot = false;
-                    if (route_cap > max_capacity) {
-                        correct = false;
-                        break;
-                    } else {
-                        route_cap = 0;
-                        service_time = 0;
-                    }
-                } else {
-                    current_depot = sol[i];
-                    observed_depot = true;
-                }
-            } else {
-                route_cap += demands[sol[i] - 1];
+      }else{
+        for (int i = 0; i < sol.size(); i++){
+          if (sol[i] > pis.getnbCustomers()){
+            if (observed_depot){
+              observed_depot = false;
+              if (route_cap > pis.getmaxCapacity()){
+                correct = false;
+                break; 
+              }else{
+                route_cap = 0;
+                service_time = 0;
+              }
+            }else{
+              current_depot = sol[i];
+              observed_depot = true;
             }
+          }else{
+            route_cap += demands[sol[i] - 1];
+          }
         }
+      }
+      return correct;
     }
 
-    return correct;
-    }
 
 
 // std::vector<std::vector<int>> emili::mdvrp::NeighborhoodMdvrp::calculate_granular(emili::Solution* value){
@@ -744,12 +640,11 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
     {
       emili::iteration_increment();
       std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-      int size = newsol.size();
-      if (sp_iterations >= size - 1){
+      if (sp_iterations >= newsol.size() - 1){
         return nullptr;
       }else{
-        end_position = ((end_position)%size)+1;
-        if(ep_iterations < size){
+        end_position = ((end_position)%newsol.size())+1;
+        if(ep_iterations < newsol.size()){
             ep_iterations++;
 
         }
@@ -757,7 +652,7 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
         {
             sp_iterations++;
             ep_iterations = 1;
-            start_position = ((start_position)%size)+1;
+            start_position = ((start_position)%newsol.size())+1;
             end_position = ep_iterations;
             
         }
@@ -777,31 +672,31 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
         //   }
         // }
 
-        while (newsol[start_position] > nb_cust){
+        while (newsol[start_position] > pis.getnbCustomers()){
           start_position += 1;
           sp_iterations ++;
-          if (start_position >= size){
+          if (start_position >= newsol.size()){
             start_position = 1;
             end_position = 1;
-            sp_iterations = size - 1;
+            sp_iterations = newsol.size() - 1;
           }
         }
         int route_depot;
         bool possible_depot = false;
         bool brake = false;
         while (!possible_depot && !brake){
-          while (newsol[end_position] > nb_cust){
+          while (newsol[end_position] > pis.getnbCustomers()){
             end_position += 1;
             ep_iterations ++;
-            if (end_position >= size - 1){
+            if (end_position >= newsol.size() - 1){
               end_position = start_position;
-              ep_iterations = size;
+              ep_iterations = newsol.size();
               brake = true;
             }
           }
 
           for (int z = end_position; z >= 0; z--){
-            if (newsol[z] > nb_cust){
+            if (newsol[z] > pis.getnbCustomers()){
               route_depot = newsol[z];
               break;
             }
@@ -813,22 +708,17 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
             }
           }
           if (!possible_depot && ! brake){
-            while (newsol[end_position] <= nb_cust){
+            while (newsol[end_position] <= pis.getnbCustomers()){
               end_position += 1;
               ep_iterations ++;
             }
           }
         }
-        // bool doable;
+        bool doable;
         int sol_i = newsol[start_position];
         newsol.erase(newsol.begin()+start_position);
         newsol.insert(newsol.begin()+end_position,sol_i);
-        // if (start_position <= end_position){
-        //   doable = checkConstraints(newsol, start_position, end_position); 
-        // }else{
-        //   doable = checkConstraints(newsol, end_position, start_position);
-        // }
-        bool doable = checkConstraints(newsol);
+        doable = checkConstraints(newsol);
         if (doable){
           double new_val = pis.computeObjectiveFunction(newsol);
           value->setSolutionValue(new_val);
@@ -861,17 +751,17 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
 
       emili::Solution* emili::mdvrp::MdvrpMoveNeighborhood::random(Solution* currentSolution)
       {
-      std::vector < int > newsol = (((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+      std::vector < int >& newsol = (((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
       int best_i, best_j;
+      int nb_cust = pis.getnbCustomers();
       bool done = false;
       int counter = 0; // counter so that it doesnt stay here infinetly 
-      int size = newsol.size();
-      while (!done && counter < size / 2){
-        best_i = (emili::generateRandomNumber()%size); 
-        best_j = (emili::generateRandomNumber()%size);
+      while (!done && counter < newsol.size() / 2){
+        best_i = (emili::generateRandomNumber()%newsol.size()); 
+        best_j = (emili::generateRandomNumber()%newsol.size());
         while (newsol[best_i] > nb_cust || newsol[best_j] > nb_cust){ // make sure we are not moving a depot 
-          best_i = (emili::generateRandomNumber()%size);
-          best_j = (emili::generateRandomNumber()%size);
+          best_i = (emili::generateRandomNumber()%newsol.size());
+          best_j = (emili::generateRandomNumber()%newsol.size());
         }
         int sol_i = newsol[best_i]; 
         newsol.erase(newsol.begin()+best_i);
@@ -891,7 +781,6 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
 
     void emili::mdvrp::MdvrpMoveNeighborhood::reverseLastMove(Solution* step)
     {
-      
       std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)step)->get_sol();
       int sol_i = newsol[end_position];
       newsol.erase(newsol.begin()+end_position);
@@ -904,31 +793,30 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
     {
       emili::iteration_increment();
       std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-      int size = newsol.size();
-      if (sp_iterations >= size - 2){
+      if (sp_iterations >= newsol.size() - 2){
         return nullptr;
       }else{
-        end_position = ((end_position)%size)+1;
-        if(ep_iterations < size){
+        end_position = ((end_position)%newsol.size())+1;
+        if(ep_iterations < newsol.size()){
             ep_iterations++;
         }
         else
         {
             sp_iterations++;
             ep_iterations = 1;
-            start_position = ((start_position)%size)+1;
+            start_position = ((start_position)%newsol.size())+1;
             end_position = ep_iterations;
         }
         start_position2 = start_position + 1;
-        while (newsol[start_position] > nb_cust || newsol[start_position2] > nb_cust){ 
+        while (newsol[start_position] > pis.getnbCustomers() || newsol[start_position2] > pis.getnbCustomers()){ 
           start_position +=1;
           start_position2 +=1;
           sp_iterations += 1;
-          if (start_position2 > size - 2 || start_position > size - 3){
+          if (start_position2 > newsol.size() - 2 || start_position > newsol.size() - 3){
             start_position2 = 1;
             start_position = 0;
             end_position = 2;
-            sp_iterations = size - 2;
+            sp_iterations = newsol.size() - 2;
           }
         }
        
@@ -936,19 +824,18 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
         bool possible_depot = false;
         bool brake = false;
         while (!possible_depot && !brake){
-          while (newsol[end_position] > nb_cust || newsol[end_position + 1] > nb_cust){
+          while (newsol[end_position] > pis.getnbCustomers() || newsol[end_position + 1] > pis.getnbCustomers()){
             end_position += 1;
             ep_iterations ++;
-            if (end_position >= size - 1){
+            if (end_position >= newsol.size() - 1){
               end_position = 1;
-              ep_iterations = size;
+              ep_iterations = newsol.size();
               brake = true;
-              break;
             }
           }
 
           for (int z = end_position; z >= 0; z--){
-            if (newsol[z] > nb_cust){
+            if (newsol[z] > pis.getnbCustomers()){
               route_depot = newsol[z];
               break;
             }
@@ -960,38 +847,33 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
             }
           }
           if (!possible_depot && ! brake){
-            while (newsol[end_position] <= nb_cust){
+            while (newsol[end_position] <= pis.getnbCustomers()){
               end_position += 1;
               ep_iterations ++;
             }
           }
         }
-        // bool doable;
+
+
+        bool doable;
         int sol_i = newsol[start_position];
         int sol_i2 = newsol[start_position2];
         real_end_position = end_position;
         newsol.erase(newsol.begin() + start_position2);
         newsol.erase(newsol.begin() + start_position);
         bool increase = false;
-        while (real_end_position >= size - 1 || (newsol[real_end_position] > nb_cust + 1)){
+        while (real_end_position >= newsol.size() - 1){
           real_end_position -=1 ;
           increase = true;
         }
         newsol.insert(newsol.begin()+real_end_position,sol_i2);
         newsol.insert(newsol.begin()+real_end_position,sol_i);
 
-        
-        if (increase ){
+         if (increase ){
            real_end_position += 1;
          }
-        // if (start_position <= real_end_position){
-        //   doable = checkConstraints(newsol, start_position, real_end_position); 
-        // }else{
-        //   doable = checkConstraints(newsol, real_end_position, start_position);
-        // }
-        bool doable = checkConstraints(newsol);
+        doable = checkConstraints(newsol);
         if (doable){
-
           double new_value = pis.computeObjectiveFunction(newsol);
           value->setSolutionValue(new_value);
         }
@@ -1026,31 +908,31 @@ bool emili::mdvrp::NeighborhoodMdvrp::checkConstraints(std::vector<int>& sol){
     newsol.insert(newsol.begin()+start_position,sol_i2);
     newsol.insert(newsol.begin()+start_position,sol_i);
 
+
     }
     
 
      emili::Solution* emili::mdvrp::MdvrpMove2Neighborhood::random(Solution* currentSolution)
       {
-      std::vector < int > newsol = (((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+      std::vector < int >& newsol = (((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
       int best_i, best_j;
       int nb_cust = pis.getnbCustomers();
       bool done = false;
       int counter = 0; // counter so that it doesnt stay here infinetly 
-      int size = newsol.size();
       while (!done && counter < newsol.size() / 2){
-        best_i = (emili::generateRandomNumber()%size); // dont make random, make test all positions
-        best_j = (emili::generateRandomNumber()%size);
+        best_i = (emili::generateRandomNumber()%newsol.size()); // dont make random, make test all positions
+        best_j = (emili::generateRandomNumber()%newsol.size());
 
         while (newsol[best_i] > nb_cust || newsol[best_j] > nb_cust || newsol[best_i + 1] > nb_cust || newsol[best_j + 1] > nb_cust ){ // make sure we are not moving a depot 
-          best_i = (emili::generateRandomNumber()%size);
-          best_j = (emili::generateRandomNumber()%size);
+          best_i = (emili::generateRandomNumber()%newsol.size());
+          best_j = (emili::generateRandomNumber()%newsol.size());
         }
         int sol_i = newsol[best_i]; 
         int sol_i2 = newsol[best_i + 1]; 
         newsol.erase(newsol.begin()+best_i + 1);
         newsol.erase(newsol.begin()+best_i);
         bool increase = false;
-        int best_j2 = best_j >= size - 1 ? size - 1 : best_j;
+        int best_j2 = best_j >= newsol.size() - 1 ? newsol.size() - 1 : best_j;
         // if (best_j > newsol.size() || best_j2 > newsol.size()){
         //           std::cout << newsol.size()<< std::endl;
         // std::cout << best_j << " " << best_j2 << std::endl;
@@ -1093,20 +975,19 @@ emili::Solution* emili::mdvrp::MdvrpTransposeNeighborhood::computeStep(emili::So
 
     emili::iteration_increment();
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-    int size = newsol.size();
-    if(sp_iterations >= size)
+    if(sp_iterations >= newsol.size())
     {
         return nullptr;
     }
     else
     {
         sp_iterations++;
-        start_position = (start_position%size)+1;
+        start_position = (start_position%newsol.size())+1;
         endpos = start_position + 1;
-        while (newsol[start_position] >= nb_cust || newsol[endpos] >= nb_cust ){
+        while (newsol[start_position] >= pis.getnbCustomers() || newsol[endpos] >= pis.getnbCustomers()){
           start_position ++;
           endpos ++;
-          if (endpos >= size){
+          if (endpos >= newsol.size()){
             endpos = 2;
             start_position = 1;
             sp_iterations ++;
@@ -1124,8 +1005,9 @@ emili::Solution* emili::mdvrp::MdvrpTransposeNeighborhood::computeStep(emili::So
 
       emili::Solution* emili::mdvrp::MdvrpTransposeNeighborhood::random(Solution* currentSolution)
       {
-      std::vector < int > newsol = (((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+      std::vector < int >& newsol = (((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
       int best_i;
+      int nb_cust = pis.getnbCustomers();
       bool done = false;
       int counter = 0; // counter so that it doesnt stay here infinetly 
       while (!done && counter < newsol.size()/ 2){
@@ -1176,23 +1058,22 @@ emili::Solution* emili::mdvrp::MdvrpExchangeNeighborhood::computeStep(emili::Sol
 {
    emili::iteration_increment();
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-    int size = newsol.size();
-    if(sp_iterations >= size - 1)
+    if(sp_iterations >= newsol.size() - 1)
     {    
         return nullptr;
     }else
     {
-        if(ep_iterations < size - 1){
+        if(ep_iterations < newsol.size() - 1){
             ep_iterations++;
         }
         else
         {
             sp_iterations++;
             ep_iterations = sp_iterations+1;
-            start_position = (start_position%size)+1;
+            start_position = (start_position%newsol.size())+1;
             end_position = start_position;
         }
-        end_position = (end_position%size)+1;
+        end_position = (end_position%newsol.size())+1;
         // bool ah = false;
         // while (end_position < newsol.size() - 1 && start_position < newsol.size() - 1 && !ah){
         //   // std::cout << start_position << " " << end_position << " " << newsol.size() << std::endl;
@@ -1207,37 +1088,37 @@ emili::Solution* emili::mdvrp::MdvrpExchangeNeighborhood::computeStep(emili::Sol
         //     ah = true;
         //   }
         // }
-        while (newsol[start_position] > nb_cust){
+        while (newsol[start_position] > pis.getnbCustomers()){
           start_position += 1;
           sp_iterations ++;
-          if (start_position >= size){
+          if (start_position >= newsol.size()){
             start_position = 1;
             end_position = 1;
-            sp_iterations = size - 1;
+            sp_iterations = newsol.size() - 1;
           }
         }
        
         int route_depot;
         bool possible_depot = false;
         bool brake = false;
-        if (end_position >= size){
+        if (end_position >= newsol.size()){
               end_position = start_position;
-              ep_iterations = size;
+              ep_iterations = newsol.size();
               brake = true;
         }
         while (!possible_depot && !brake){
-          while (newsol[end_position] > nb_cust){
+          while (newsol[end_position] > pis.getnbCustomers()){
             end_position += 1;
             ep_iterations ++;
-            if (end_position >= size){
+            if (end_position >= newsol.size()){
               end_position = start_position;
-              ep_iterations = size;
+              ep_iterations = newsol.size();
               brake = true;
               break;
             }
           }
           for (int z = end_position; z >= 0; z--){
-            if (newsol[z] > nb_cust){
+            if (newsol[z] > pis.getnbCustomers()){
               route_depot = newsol[z];
               break;
             }
@@ -1249,15 +1130,15 @@ emili::Solution* emili::mdvrp::MdvrpExchangeNeighborhood::computeStep(emili::Sol
             }
           }
           if (!possible_depot && ! brake){
-            while (newsol[end_position] <= nb_cust){
+            while (newsol[end_position] <= pis.getnbCustomers()){
               end_position += 1;
               ep_iterations ++;
             }
           }
         }
+        bool doable = false;
         std::swap(newsol[start_position],newsol[end_position]);
-        // bool doable = checkConstraints(newsol, start_position, end_position); 
-        bool doable = checkConstraints(newsol);
+        doable = checkConstraints(newsol); 
         if (doable){
           double new_val = pis.computeObjectiveFunction(newsol);
           value->setSolutionValue(new_val);
@@ -1278,21 +1159,23 @@ emili::Solution* emili::mdvrp::MdvrpExchangeNeighborhood::random(Solution *curre
 {
 
     std::vector < int > newsol(((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+    int nb_cust = pis.getnbCustomers();
     int best_i, best_j;
     bool done = false;
     int counter = 0; // counter so that it doesnt stay here infinetly or at least very long, MAYBE REMOVE THIS AT SOME POINT TO CHECK IF MAKES DIFF IN RESULTS
-    int size = newsol.size();
-    while (!done && counter < size/ 2){
-      best_i = (emili::generateRandomNumber()%size); 
-      best_j = (emili::generateRandomNumber()%size);
-      if (newsol[best_i] <= nb_cust && newsol[best_j] <= nb_cust){ // make sure we are not moving a depot 
-        std::swap(newsol[best_i],newsol[best_j]);
-        done = checkConstraints(newsol); // seems to be working
-        if (!done){
-          std::swap(newsol[best_j],newsol[best_i]);
-        }
-      counter++;
+    while (!done && counter < newsol.size()/ 2){
+      best_i = (emili::generateRandomNumber()%newsol.size()); 
+      best_j = (emili::generateRandomNumber()%newsol.size());
+      while (newsol[best_i] > nb_cust || newsol[best_j] > nb_cust){ // make sure we are not moving a depot 
+            best_i = (emili::generateRandomNumber()%newsol.size());
+            best_j = (emili::generateRandomNumber()%newsol.size());
       }
+      std::swap(newsol[best_i],newsol[best_j]);
+      done = checkConstraints(newsol); // seems to be working
+      if (!done){
+              std::swap(newsol[best_j],newsol[best_i]);
+      }
+      counter++;
     }
     double value = pis.computeObjectiveFunction(newsol);
     return new emili::mdvrp::SolutionMdvrp(value,newsol);
@@ -1321,63 +1204,62 @@ emili::Solution* emili::mdvrp::MdvrpExchange2Neighborhood::computeStep(emili::So
 {
    emili::iteration_increment();
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-    int size = newsol.size();
-    if(sp_iterations >= size)
+    if(sp_iterations >= newsol.size())
     {        
         return nullptr;
     }else{
-      if(ep_iterations < size - 1){
+      if(ep_iterations < newsol.size() - 1){
             ep_iterations++;
         }
         else
         {
             sp_iterations++;
             ep_iterations = sp_iterations+1;
-            start_position = (start_position%size)+1;
+            start_position = (start_position%newsol.size())+1;
             end_position = start_position;
         }
-        end_position = (end_position%size)+1;
+        end_position = (end_position%newsol.size())+1;
         start_position2 = start_position + 1;
         end_position2 = end_position + 1;
         // if (start_position2 >= newsol.size() || start_position >= newsol.size()){
         //   start_position = newsol.size() - 1;
         //   start_position2 = newsol.size() - 1;
         // }
-        while (newsol[start_position] > nb_cust || newsol[start_position2] > nb_cust){
+        while (newsol[start_position] > pis.getnbCustomers() || newsol[start_position2] > pis.getnbCustomers()){
           start_position +=1;
           start_position2 +=1;
           sp_iterations += 1;
           ep_iterations += 1; // this thing about end_positions is making it take longer somehow for bigger instances, pretty much non existant tho
           end_position2 +=1;
           end_position +=1;
-          if (start_position >= size){
+          if (start_position >= newsol.size()){
             reset();
-            sp_iterations = size - 1;
+            sp_iterations = newsol.size() - 1;
           }
         }
-
+        
         int route_depot;
         bool possible_depot = false;
         bool brake = false;
         while (!possible_depot && !brake){
-          if (end_position >= size || end_position2 >= size){
-            end_position = size - 1;
-            end_position2 = size - 1;
+          if (end_position >= newsol.size() || end_position2 >= newsol.size()){
+            end_position = newsol.size() - 1;
+            end_position2 = newsol.size() - 1;
           }
-          while (newsol[end_position] > nb_cust || newsol[end_position2] > nb_cust){
+          while (newsol[end_position] > pis.getnbCustomers() || newsol[end_position2] > pis.getnbCustomers()){
             end_position += 1;
             end_position2 +=1;
             ep_iterations ++;
-            if (end_position2 >= size){
+            if (end_position2 >= newsol.size()){
               end_position = start_position;
               end_position2 = start_position2;
-              ep_iterations = size;
+              ep_iterations = newsol.size();
               brake = true;
               break;
             }
           }
           for (int z = end_position; z >= 0; z--){
-            if (newsol[z] > nb_cust){
+            if (newsol[z] > pis.getnbCustomers()){
               route_depot = newsol[z];
               break;
             }
@@ -1389,7 +1271,7 @@ emili::Solution* emili::mdvrp::MdvrpExchange2Neighborhood::computeStep(emili::So
             }
           }
           if (!possible_depot && ! brake){
-            while (newsol[end_position2] <= nb_cust){
+            while (newsol[end_position2] <= pis.getnbCustomers()){
               end_position += 1;
               end_position2 +=1;
               ep_iterations ++;
@@ -1398,10 +1280,12 @@ emili::Solution* emili::mdvrp::MdvrpExchange2Neighborhood::computeStep(emili::So
         }
 
 
+
+        bool doable = false;
         std::swap(newsol[start_position],newsol[end_position]);
         std::swap(newsol[start_position2],newsol[end_position2]);
-        //bool doable = checkConstraints(newsol, start_position, end_position); 
-        bool doable = checkConstraints(newsol);
+        doable = checkConstraints(newsol); // seems to be working
+        
         if (doable){
           double new_val = pis.computeObjectiveFunction(newsol);
           value->setSolutionValue(new_val);
@@ -1419,7 +1303,6 @@ emili::Solution* emili::mdvrp::MdvrpExchange2Neighborhood::computeStep(emili::So
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)step)->get_sol();
     std::swap(newsol[start_position],newsol[end_position]);
     std::swap(newsol[start_position2],newsol[end_position2]);
-
 }
 
 
@@ -1428,18 +1311,18 @@ emili::Solution* emili::mdvrp::MdvrpExchange2Neighborhood::random(Solution *curr
 {
 
     std::vector < int > newsol(((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+    int nb_cust = pis.getnbCustomers();
     int best_i, best_j,best_i2, best_j2;
     bool done = false;
     int counter = 0; // counter so that it doesnt stay here infinetly or at least very long, MAYBE REMOVE THIS AT SOME POINT TO CHECK IF MAKES DIFF IN RESULTS
-    int size = newsol.size();
-    while (!done && counter < size / 2 ){
-      best_i = (emili::generateRandomNumber()%size); 
-      best_j = (emili::generateRandomNumber()%size);
+    while (!done && counter < newsol.size() / 2 ){
+      best_i = (emili::generateRandomNumber()%newsol.size()); 
+      best_j = (emili::generateRandomNumber()%newsol.size());
       best_i2 = best_i + 1;
       best_j2 = best_j + 1;
        while (newsol[best_i] > nb_cust || newsol[best_j] > nb_cust || newsol[best_i2] > nb_cust || newsol[best_j2] > nb_cust){ // make sure we are not moving a depot 
-            best_i = (emili::generateRandomNumber()%size);
-            best_j = (emili::generateRandomNumber()%size);
+            best_i = (emili::generateRandomNumber()%newsol.size());
+            best_j = (emili::generateRandomNumber()%newsol.size());
             best_i2 = best_i + 1;
             best_j2 = best_j + 1;
       }
@@ -1478,22 +1361,21 @@ emili::Solution* emili::mdvrp::MdvrpExchange21Neighborhood::computeStep(emili::S
 {
    emili::iteration_increment();
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-    int size = newsol.size();
-    if(sp_iterations >= size)
+    if(sp_iterations >= newsol.size())
     {        
         return nullptr;
     }else{
-      if(ep_iterations < size - 1){
+      if(ep_iterations < newsol.size() - 1){
             ep_iterations++;
         }
         else
         {
             sp_iterations++;
             ep_iterations = sp_iterations+1;
-            start_position = (start_position%size)+1;
+            start_position = (start_position%newsol.size())+1;
             end_position = ep_iterations;
         }
-        end_position = (end_position%size)+1;
+        end_position = (end_position%newsol.size())+1;
         start_position2 = start_position + 1;
         // bool ah = false;
         // while (end_position < newsol.size() && !ah){
@@ -1505,34 +1387,34 @@ emili::Solution* emili::mdvrp::MdvrpExchange21Neighborhood::computeStep(emili::S
         //     ah = true;
         //   }
         // }
-        while (newsol[start_position] > nb_cust || newsol[start_position2] > nb_cust){
+        while (newsol[start_position] > pis.getnbCustomers() || newsol[start_position2] > pis.getnbCustomers()){
           start_position +=1;
           start_position2 +=1;
           sp_iterations += 1;
-          if (start_position2 >= size - 2){
+          if (start_position2 >= newsol.size() - 2){
             reset();
-            sp_iterations = size - 1;
+            sp_iterations = newsol.size() - 1;
           }
         }
         int route_depot;
         bool possible_depot = false;
         bool brake = false;
-        if (end_position >= size){
+        if (end_position >= newsol.size()){
           brake = true;
         }
         while (!possible_depot && !brake){
-          while (newsol[end_position] > nb_cust){
+          while (newsol[end_position] > pis.getnbCustomers()){
             end_position += 1;
             ep_iterations ++;
-            if (end_position >= size - 1){
+            if (end_position >= newsol.size() - 1){
               end_position = start_position2;
-              ep_iterations = size;
+              ep_iterations = newsol.size();
               brake = true;
             }
           }
           int route_depot;
           for (int z = end_position; z >= 0; z--){
-            if (newsol[z] > nb_cust){
+            if (newsol[z] > pis.getnbCustomers()){
               route_depot = newsol[z];
               break;
             }
@@ -1544,14 +1426,13 @@ emili::Solution* emili::mdvrp::MdvrpExchange21Neighborhood::computeStep(emili::S
             }
           }
             if (!possible_depot && !brake){
-              while (newsol[end_position] <= nb_cust){
+              while (newsol[end_position] <= pis.getnbCustomers()){
                 end_position += 1;
                 ep_iterations ++;
             }
             }
         }
-
-        //bool doable;
+        bool doable = false;
         if (end_position >= start_position2){
           int soli = newsol[start_position];
           std::swap(newsol[start_position2],newsol[end_position]);
@@ -1564,18 +1445,12 @@ emili::Solution* emili::mdvrp::MdvrpExchange21Neighborhood::computeStep(emili::S
           newsol.insert(newsol.begin() + end_position, soli);
         }
 
-
-        // if (start_position <= end_position){
-        //   doable = checkConstraints(newsol, start_position, end_position); 
-        // }else{
-        //   doable = checkConstraints(newsol, end_position, start_position);
-        // } 
-        bool doable = checkConstraints(newsol);
+        doable = checkConstraints(newsol);  
+               
         if (doable){
           double new_val = pis.computeObjectiveFunction(newsol);
           value->setSolutionValue(new_val);
         }
-
         return value;
         
       
@@ -1587,7 +1462,6 @@ emili::Solution* emili::mdvrp::MdvrpExchange21Neighborhood::computeStep(emili::S
     void emili::mdvrp::MdvrpExchange21Neighborhood::reverseLastMove(Solution *step)
 {
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)step)->get_sol();
-
     if (end_position >= start_position2){
       int soli = newsol[end_position - 1];
       newsol.erase(newsol.begin() + end_position - 1);
@@ -1609,17 +1483,17 @@ emili::Solution* emili::mdvrp::MdvrpExchange21Neighborhood::random(Solution *cur
 {
 
     std::vector < int > newsol(((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+    int nb_cust = pis.getnbCustomers();
     int best_i, best_j,best_i2;
     bool done = false;
     int counter = 0; // counter so that it doesnt stay here infinetly or at least very long, MAYBE REMOVE THIS AT SOME POINT TO CHECK IF MAKES DIFF IN RESULTS
-    int size = newsol.size();
-    while (!done && counter < size/ 2){
-      best_i = (emili::generateRandomNumber()%size); 
-      best_j = (emili::generateRandomNumber()%size);
+    while (!done && counter < newsol.size()/ 2){
+      best_i = (emili::generateRandomNumber()%newsol.size()); 
+      best_j = (emili::generateRandomNumber()%newsol.size());
       best_i2 = best_i + 1;
       while (newsol[best_i] > nb_cust || newsol[best_j] > nb_cust || newsol[best_i2] > nb_cust || best_j <= best_i){ // make sure we are not moving a depot 
-            best_i = (emili::generateRandomNumber()%size);
-            best_j = (emili::generateRandomNumber()%size);
+            best_i = (emili::generateRandomNumber()%newsol.size());
+            best_j = (emili::generateRandomNumber()%newsol.size());
             best_i2 = best_i + 1;
       }
       int soli = newsol[best_i];
@@ -1663,62 +1537,60 @@ emili::Solution* emili::mdvrp::Mdvrp2optNeighborhood::computeStep(emili::Solutio
 {
     emili::iteration_increment();
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-    int size = newsol.size();
-    if(sp_iterations >= size - 2)
+    if(sp_iterations >= newsol.size() - 2)
     {    
         return nullptr;
     }else
     {
-        if(ep_iterations < size - 1){
+        if(ep_iterations < newsol.size() - 1){
             ep_iterations++;
         }
         else
         {
             sp_iterations++;
             ep_iterations = sp_iterations+2;
-            start_position = (start_position%size)+1;
+            start_position = (start_position%newsol.size())+1;
             end_position = start_position;
         }
-        end_position = (end_position%size)+1;
+        end_position = (end_position%newsol.size())+1;
         end_position2 = end_position + 1;
         start_position2 = start_position + 1;
-        while (end_position < size && newsol[end_position] > nb_cust){
+        while (end_position < newsol.size() && newsol[end_position] > pis.getnbCustomers()){
           end_position += 1;
           end_position2 +=1;
           ep_iterations ++;
 
         }
-        if (end_position2 > size - 1){
+        if (end_position2 > newsol.size() - 1){
             start_position ++;
             start_position2 ++;
             end_position2 = start_position + 3;
             end_position = start_position2 + 1;
         }
-        while (start_position2 < size && newsol[start_position2] > nb_cust){
+        while (start_position2 < newsol.size() && newsol[start_position2] > pis.getnbCustomers()){
           start_position += 1;
           start_position2 += 1;
           sp_iterations ++;
         }
-        if (start_position >= size - 3){
+        if (start_position >= newsol.size() - 3){
           start_position = 1;
           start_position2 = 2;
           end_position = 3;
           end_position2 = 4;
 
         }
-        bool doable;
+        bool doable = false;
         diff_route = false;
         int last_depot = 0;
         for (int d = start_position2; d <= end_position2; d++){
-          if (newsol[d] > nb_cust){
+          if (newsol[d] > pis.getnbCustomers()){
             diff_route = true;
             break;
           } 
         }
-
         if(diff_route){
           doable = false;
-          ep_iterations = size;
+          ep_iterations = newsol.size();
         }else{
           std::swap(newsol[start_position2],newsol[end_position]);
           int invert1 = start_position2 + 1;
@@ -1728,8 +1600,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optNeighborhood::computeStep(emili::Solutio
             invert1+=1;
             invert2-=1;
           }
-          //doable = checkConstraints(newsol, start_position, end_position); 
-          doable = checkConstraints(newsol);
+          doable = checkConstraints(newsol); 
         }
         
         if (doable){
@@ -1757,18 +1628,18 @@ emili::Solution* emili::mdvrp::Mdvrp2optNeighborhood::computeStep(emili::Solutio
         invert2-=1;
       }
     }
-
+    
 }
 
 bool emili::mdvrp::Mdvrp2optNeighborhood::different_depot(std::vector <int>& newsol, int best_i, int best_j, int best_i2, int best_j2){
   bool diff_depot = false;
   int last_depot = 0;
   for (int d = best_i2; d < best_j2; d++){
-    if (last_depot = 0 && newsol[d] > nb_cust){
+    if (last_depot = 0 && newsol[d] > pis.getnbCustomers()){
       last_depot = newsol[d];
-    }else if (newsol[d] > nb_cust && newsol[d] != last_depot){
+    }else if (newsol[d] > pis.getnbCustomers() && newsol[d] != last_depot){
       diff_depot = true;
-    }else if (newsol[d] > nb_cust){
+    }else if (newsol[d] > pis.getnbCustomers()){
       last_depot = newsol[d];
     }
   }
@@ -1779,23 +1650,23 @@ emili::Solution* emili::mdvrp::Mdvrp2optNeighborhood::random(Solution *currentSo
 {
 
     std::vector < int > newsol(((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+    int nb_cust = pis.getnbCustomers();
     int best_i, best_j,best_i2, best_j2;
     bool done = false;
     int counter = 0; // counter so that it doesnt stay here infinetly or at least very long, MAYBE REMOVE THIS AT SOME POINT TO CHECK IF MAKES DIFF IN RESULTS
-    const int max_c = pis.getmaxCapacity();
-    const int max_d = pis.getmaxDuration();
-    const std::vector<int>& demand = pis.getdemand();
-    const std::vector<int>& durations = pis.getserviceDuration();
-    int size = newsol.size();
-    while (!done && counter < size / 2){
-      best_i = (emili::generateRandomNumber()%size); 
-      best_j = (emili::generateRandomNumber()%size);
+    int max_c = pis.getmaxCapacity();
+    int max_d = pis.getmaxDuration();
+    std::vector<int> demand = pis.getdemand();
+    std::vector<int> durations = pis.getserviceDuration();
+    while (!done && counter < newsol.size() / 2){
+      best_i = (emili::generateRandomNumber()%newsol.size()); 
+      best_j = (emili::generateRandomNumber()%newsol.size());
       best_i2 = best_i + 1;
       best_j2 = best_j + 1;
       bool diff_depot = different_depot(newsol, best_i, best_j, best_i2, best_j2);
       while (newsol[best_i2] > nb_cust || newsol[best_j] > nb_cust || diff_depot || best_j < best_i){ 
-            best_i = (emili::generateRandomNumber()%size);
-            best_j = (emili::generateRandomNumber()%size);
+            best_i = (emili::generateRandomNumber()%newsol.size());
+            best_j = (emili::generateRandomNumber()%newsol.size());
             best_i2 = best_i + 1;
             best_j2 = best_j + 1;
             diff_depot = different_depot(newsol, best_i, best_j, best_i2, best_j2);
@@ -1851,58 +1722,57 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
 {
     emili::iteration_increment();
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
-    int size = newsol.size();
-    if(sp_iterations >= size - 2)
+    if(sp_iterations >= newsol.size() - 2)
     {    
         return nullptr;
     }else
     {
-        if(ep_iterations < size - 1){
+        if(ep_iterations < newsol.size() - 1){
             ep_iterations++;
         }
         else
         {
             sp_iterations++;
             ep_iterations = sp_iterations+2;
-            start_position = (start_position%size)+1;
+            start_position = (start_position%newsol.size())+1;
             end_position = start_position;
         }
-        end_position = (end_position%size)+1;
+        end_position = (end_position%newsol.size())+1;
         end_position2 = end_position + 1;
         start_position2 = start_position + 1;
-        while ((end_position < size && newsol[end_position] > nb_cust) || (end_position2 < size && newsol[end_position2] > nb_cust)){
+        while ((end_position < newsol.size() && newsol[end_position] > pis.getnbCustomers()) || (end_position2 < newsol.size() && newsol[end_position2] > pis.getnbCustomers())){
           end_position += 1;
           end_position2 +=1;
           ep_iterations ++;
-          if (end_position2 >= size - 1){
+          if (end_position2 >= newsol.size() - 1){
             start_position ++;
             start_position2 ++;
             end_position2 = start_position + 3;
             end_position = start_position2 + 1;
-            ep_iterations = size;
+            ep_iterations = newsol.size();
           }
         }
 
-      if (end_position2 >= size - 1){
+      if (end_position2 >= newsol.size() - 1){
             start_position ++;
             start_position2 ++;
             end_position2 = start_position + 3;
             end_position = start_position2 + 1;
-            ep_iterations = size;
+            ep_iterations = newsol.size();
         }
-        while ((start_position2 < size && newsol[start_position2] > nb_cust) || (start_position < size && newsol[start_position] > nb_cust)){
+        while ((start_position2 < newsol.size() && newsol[start_position2] > pis.getnbCustomers()) || (start_position < newsol.size() && newsol[start_position] > pis.getnbCustomers())){
           start_position += 1;
           start_position2 += 1;
           sp_iterations ++;
         }
-        if (start_position >= size - 3){
+        if (start_position >= newsol.size() - 3){
           start_position = 1;
           start_position2 = 2;
           end_position = 1;
           end_position2 = 2;
 
         }
-
+        bool doable = false;
         diff_route = false;
         diff_depot = false;
         int last_depot = 0;
@@ -1910,7 +1780,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
         route1.clear();
         route2.clear();
         for (int d = start_position2; d <= end_position2; d++){
-          if (newsol[d] > nb_cust){
+          if (newsol[d] > pis.getnbCustomers()){
             diff_route = true;
             index = d;
             break;
@@ -1918,11 +1788,11 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
         }
 
       for (int d = start_position2; d <= end_position2; d++){
-        if (last_depot = 0 && newsol[d] > nb_cust){
+        if (last_depot = 0 && newsol[d] > pis.getnbCustomers()){
             last_depot = newsol[d];
-          }else if (newsol[d] > nb_cust && newsol[d] != last_depot){
+          }else if (newsol[d] > pis.getnbCustomers() && newsol[d] != last_depot){
             diff_depot = true;
-          }else if (newsol[d] > nb_cust){
+          }else if (newsol[d] > pis.getnbCustomers()){
             last_depot = newsol[d];
           }
         }
@@ -1934,9 +1804,9 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             route1.push_back(newsol[t]);
           }
           int z = end_position2;
-          while (newsol[z] < nb_cust){
+          while (newsol[z] < pis.getnbCustomers()){
             route2.push_back(newsol[z]);  
-            z++;
+            z+=1;
           }
           for (int r = 0;r < route1.size(); r++){
             newsol.erase(newsol.begin() + start_position2);
@@ -1960,9 +1830,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             invert1+=1;
             invert2-=1;
           }
-          // bool doable = checkConstraints(newsol, start_position, end_position2);
-          // bool doable2 = checkConstraints(newsol2, start_position, end_position2); 
-          bool doable = checkConstraints(newsol);
+          doable = checkConstraints(newsol);
           bool doable2 = checkConstraints(newsol2);
           if (doable && doable2){
             double new_val = pis.computeObjectiveFunction(newsol);
@@ -1991,7 +1859,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             route1.push_back(newsol[t]);
           }
           int z = end_position2;
-          while (newsol[z] < nb_cust){
+          while (newsol[z] < pis.getnbCustomers()){
             route2.push_back(newsol[z]);  
             z+=1;
           }
@@ -2008,7 +1876,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
           for (int y = route1.size() - 1; y >= 0; y--){
             newsol.insert(newsol.begin() + end_position2 - diff, route1[y]);
           }
-          bool doable = checkConstraints(newsol);
+          doable = checkConstraints(newsol);
           if (doable){
             double new_val = pis.computeObjectiveFunction(newsol);
             value->setSolutionValue(new_val);
@@ -2016,7 +1884,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             value->setSolutionValue(value->getSolutionValue());
           }
         }else{
-          bool doable = false;
+          doable = false;
           value->setSolutionValue(value->getSolutionValue());
         } 
 
@@ -2051,19 +1919,20 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
         invert2-=1;
     }
     }
+    
 
-  
+    
 }
 
 bool emili::mdvrp::Mdvrp2optstarNeighborhood::different_route(std::vector <int>& newsol, int best_i, int best_j, int best_i2, int best_j2){
   bool diff_depot = false;
   int last_depot = 0;
   for (int d = best_i2; d < best_j2; d++){
-    if (last_depot = 0 && newsol[d] > nb_cust){
+    if (last_depot = 0 && newsol[d] > pis.getnbCustomers()){
       last_depot = newsol[d];
-    }else if (newsol[d] > nb_cust && newsol[d] != last_depot){
+    }else if (newsol[d] > pis.getnbCustomers() && newsol[d] != last_depot){
       diff_depot = true;
-    }else if (newsol[d] > nb_cust){
+    }else if (newsol[d] > pis.getnbCustomers()){
       last_depot = newsol[d];
     }
   }
@@ -2075,33 +1944,33 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::random(Solution *curre
 {
 
     std::vector < int > newsol(((emili::mdvrp::SolutionMdvrp*)currentSolution)->get_sol());
+    int nb_cust = pis.getnbCustomers();
     int best_i, best_j,best_i2, best_j2;
     bool done = false;
     int counter = 0; // counter so that it doesnt stay here infinetly or at least very long, MAYBE REMOVE THIS AT SOME POINT TO CHECK IF MAKES DIFF IN RESULTS
-    const int max_c = pis.getmaxCapacity();
-    const int max_d = pis.getmaxDuration();
-    const std::vector<int>& demand = pis.getdemand();
-    const std::vector<int>& durations = pis.getserviceDuration();
-    int size = newsol.size();
-    while (!done && counter < size / 2){
-      best_i = (emili::generateRandomNumber()%size); 
-      best_j = (emili::generateRandomNumber()%size);
-      if (best_i >= size){
+    int max_c = pis.getmaxCapacity();
+    int max_d = pis.getmaxDuration();
+    std::vector<int> demand = pis.getdemand();
+    std::vector<int> durations = pis.getserviceDuration();
+    while (!done && counter < newsol.size() / 2){
+      best_i = (emili::generateRandomNumber()%newsol.size()); 
+      best_j = (emili::generateRandomNumber()%newsol.size());
+      if (best_i >= newsol.size()){
         best_i -= 3;
       }
-      if (best_j >= size){
+      if (best_j >= newsol.size()){
         best_j -= 3;
       }
       best_i2 = best_i + 1;
       best_j2 = best_j + 1;
       bool diff_depot = different_route(newsol, best_i, best_j, best_i2, best_j2);
       while (newsol[best_i2] > nb_cust || newsol[best_j] > nb_cust || diff_depot || best_j < best_i){ 
-            best_i = (emili::generateRandomNumber()%size);
-            best_j = (emili::generateRandomNumber()%size);
-            if (best_i >= size){
+            best_i = (emili::generateRandomNumber()%newsol.size());
+            best_j = (emili::generateRandomNumber()%newsol.size());
+            if (best_i >= newsol.size()){
               best_i -= 3;
             }
-            if (best_j >= size){
+            if (best_j >= newsol.size()){
               best_j -= 3;
             }
             best_i2 = best_i + 1;
@@ -2138,14 +2007,14 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::random(Solution *curre
 
 
 // out of date
-bool emili::mdvrp::PerturbationRandomMove::checkConstraints(std::vector<int>& sol, int yes, int no){
+bool emili::mdvrp::PerturbationRandomMove::checkConstraints(std::vector<int>& sol){
       // capacity and time constraints check
       int route_cap = 0, service_time = 0;
       int current_depot = 0;
       bool observed_depot = false;
       bool correct = true;
-      std::vector<int>& demands = prob.getdemand();
-      std::vector<int>& durations = prob.getserviceDuration();
+      std::vector<int> demands = prob.getdemand();
+      std::vector<int> durations = prob.getserviceDuration();
       for (int i = 0; i < sol.size(); i++){
         if (sol[i] > prob.getnbCustomers()){
           if (observed_depot){
@@ -2188,7 +2057,7 @@ bool emili::mdvrp::PerturbationRandomMove::checkConstraints(std::vector<int>& so
           int sol_i = newsol[best_i]; // change to start and end position i guess
           newsol.erase(newsol.begin()+best_i);
           newsol.insert(newsol.begin()+best_j,sol_i);
-          done = checkConstraints(newsol, best_i, best_j); 
+          done = checkConstraints(newsol); 
           counter ++;
         }
         emili::mdvrp::SolutionMdvrp* nsol = new emili::mdvrp::SolutionMdvrp(newsol);

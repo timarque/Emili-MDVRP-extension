@@ -246,14 +246,12 @@ class NeighborhoodMdvrp: public emili::Neighborhood
 protected:
     Mdvrp& pis;
     std::vector<std::vector<int>> nlist = pis.getnlist();
-    const int nb_cust;
     //std::vector<std::vector<int>> granular;
     //int routes;
     virtual Solution* computeStep(Solution* step) =0;
 public:
-    NeighborhoodMdvrp(Mdvrp& problem):pis(problem),nb_cust(pis.getnbCustomers()){}
+    NeighborhoodMdvrp(Mdvrp& problem):pis(problem){}
     bool checkConstraints(std::vector<int>& sol);
-    //bool checkConstraints(std::vector<int>& sol, int yes, int no);
     //std::vector<std::vector<int>> calculate_granular(emili::Solution* value);
     virtual Solution* step(Solution* currentSolution);
     virtual Mdvrp& getProblem() { return pis; }
@@ -453,7 +451,7 @@ class PerturbationRandomMove: public emili::Perturbation
      * perturbed solution
      */
     virtual Solution* perturb(Solution* solution);
-    virtual bool checkConstraints(std::vector<int>& sol, int yes, int no);
+    virtual bool checkConstraints(std::vector<int>& sol);
 
     virtual ~PerturbationRandomMove() { }
 };
