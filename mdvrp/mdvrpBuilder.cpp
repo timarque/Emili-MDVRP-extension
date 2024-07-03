@@ -168,16 +168,13 @@ emili::Termination* prs::MdvrpBuilder::buildTermination()
     if(tm.checkToken(TERMINATION_ITERA))
     {
         int ti = instance->getnbCustomers();
-        if (ti > 300){
-            ti = 200; // experiment with this 
-        }else if (ti > 200 && ti <= 300){
-            ti = 300;
-        }else if (ti > 100 && ti <= 200){ 
-            ti = 400;
-        // }else if (ti > 100 && ti < 200){
-        //     ti = 600;  // idk yet, experiment
+        if (ti > 500){
+            ti = 20;
+        }
+        else if (ti > 300){
+            ti = 100; // experiment with this 
         }else{
-            ti = 800;
+            ti = 200;
         }        
         std::ostringstream oss;
         oss << "number of max iterations "<< ti;

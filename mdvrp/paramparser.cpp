@@ -247,7 +247,7 @@ void prs::ParamParser::problem(prs::TokenManager& tm, int nlist_d)
     problem_type = tm.nextToken();
     bool ok;
     std::string pro(problem_type);
-    std::string sdst("SDSTMDVRP");// what is sdst ? 
+    std::string sdst("SDSTMDVRP");
     ok = i.readDataFromFile(tm.tokenAt(1), nlist_d);
     if(ok)
      {
