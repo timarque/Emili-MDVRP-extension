@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
           //  std::cerr << solution->getSolutionValue() << std::endl;            
             std::cout << "Found solution: ";
             std::cout << solution->getSolutionRepresentation() << std::endl;
-            std::cout << std::fixed << solval;
+            std::cout << std::fixed << solval << std::endl;
             //writing solutions to a file
             std::string fileoutname = "/home/tagotuga/Emili-MDVRP-extension/solutions/instances_seed_"; 
             std::string fullPath = argv[1];
