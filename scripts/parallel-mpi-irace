@@ -1,0 +1,138 @@
+#!/bin/bash
+# This is a version of tune-main for launching irace using the --mpi
+# option in a SLURM Cluster.
+set -e
+set -o pipefail
+
+# combine all parameters to $1
+error () {
+    echo "$0: error: $@" >&2
+    exit 1
+}
+
+# Issue usage if no parameters are given.
+if [ $# == 0 ]; then
+    echo "Usage: ./parallel-mpi-irace <EXECDIR> <REPETITIONS> <EXPNAME> --parallel <NB_SLAVES> --rack <rack_number> --queue <queue> additional_args_to_irace"
+    exit 1
+fi
+
+#BINDIR=$1
+#shift
+EXECDIR=$1
+shift
+REPETITIONS=$1
+shift
+EXPNAME=$1
+shift
+
+# initialization
+NB_SLAVES=126
+RACK_NUM=7
+QUEUE_ARG=long
+SEED=1234567
+
+PARAMS=
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --parallel) shift; NB_SLAVES="$1"; shift;;
+	    --rack) shift; RACK_NUM="$1"; shift;;
+	    --queue) shift; QUEUE_ARG="$1"; shift;;
+        *) PARAMS="$PARAMS $1"; shift;;# terminate case
+  esac
+done
+
+if [ $NB_SLAVES -lt 2 ]; then
+    echo "$0: error: --parallel must be larger than 1"
+    exit 1
+fi
+
+let NB_PARALLEL_PROCESS=NB_SLAVES+1
+
+QUEUE=long
+case $QUEUE_ARG in
+	long) QUEUE=long;;
+	short) QUEUE=short;;
+	*) ;;
+esac
+
+# BINDIR=/home/tmarques/R/x86_64-redhat-linux-gnu-library/4.3/irace/bin
+BINDIR=/home/tmarques/R/x86_64-redhat-linux-gnu-library/4.3/irace/bin
+
+# Machine on the cluster
+MACHINE=Epyc7452
+case $RACK_NUM in
+	4)MACHINE=Opteron6272;;
+	5)MACHINE=XeonE52680;;
+	6)MACHINE=Xeon6138;;
+	7)MACHINE=Epyc7452;;
+	*) ;;
+esac
+
+MPIRUN=/opt/ohpc/pub/mpi/openmpi4-gnu9/4.1.1/bin/mpirun
+
+CURRENT_DIR=`pwd`
+
+irace_main() {
+    # We would like to use $BASHPID here, but OS X version of bash does not
+    # support it.
+    JOBNAME=$EXPNAME-$1
+    exec sbatch <<EOF
+#!/bin/sh
+#SBATCH -J $JOBNAME
+#SBATCH -p $MACHINE
+#SBATCH -q $QUEUE
+##SBATCH -N $NB_PARALLEL_PROCESS  #This specify the number of nodes you want to use, not needed 
+#SBATCH -N 1
+#SBATCH -n $NB_PARALLEL_PROCESS
+#SBATCH -o $EXECDIR/irace-$$.stdout
+#SBATCH -e $EXECDIR/irace-$$.stderr
+##SBATCH -wd $CURRENT_DIR # altough this is the default for slurm
+
+export OMPI_MCA_plm_rsh_disable_qrsh=1
+export PATH
+
+echo -e "# Command line:\n\
+  BATCH FILE: ${BASH_SOURCE[0]} \n\
+  BINDIR: $BINDIR \n\
+  EXECDIR: $EXECDIR \n\
+  JOBNAME: $JOBNAME \n\
+  MACHINE NAME: $MACHINE\n\
+  START TIME: $(date "+%Y-%m-%d %H:%M:%S")"\
+>> $EXECDIR/irace-$$.stdout
+
+$MPIRUN -x OMPI_MCA_plm_rsh_disable_qrsh -x PATH \
+        -np 1 $BINDIR/irace --exec-dir=$EXECDIR \
+        --parallel $NB_SLAVES --mpi 1 $PARAMS
+
+EOF
+}
+## End of customization
+
+# Number of repetitions of iRace
+START=1
+
+if [[ "$REPETITIONS" =~ ^([0-9]+)-([0-9]+)$ ]] ; then
+    START=${BASH_REMATCH[1]}
+    REPETITIONS=${BASH_REMATCH[2]}
+elif ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
+    error "number of repetitions must be an integer"
+fi
+
+# execDir (--exec-dir) directory
+EXECDIR_PREFIX=${EXECDIR:-execDir}
+
+for i in $(seq $START $REPETITIONS); do
+    EXECDIR=$(printf '%s/exp-%002d' ${EXECDIR_PREFIX} $i)
+    # echo "execution directory: $EXECDIR"
+    if [ -d $EXECDIR ]; then
+        creat_time=$(date -r $EXECDIR +"%d%m%y.%H%M")
+        NEW_EXECDIR=$(printf '%s/%s.exp-%002d' ${EXECDIR_PREFIX} ${creat_time} $i)
+        mv $EXECDIR $NEW_EXECDIR
+    fi
+    # rm -rf $EXECDIR
+    mkdir -p $EXECDIR
+    let RUNSEED=SEED+i-1
+    irace_main $(printf '%002d' $i) & 
+    sleep 1
+done
+
