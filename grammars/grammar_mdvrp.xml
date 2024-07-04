@@ -3,10 +3,10 @@
 
 <gr:grammar xmlns:gr="grammar">
     <gr:derivations xmlns:mdvrp="mdvrp_automatic_generation">
-	 <mdvrp:steps type="int" min="0" max="500" stepIfEnumerated="1"/>
+	 <mdvrp:steps type="int" min="0" max="400" stepIfEnumerated="50"/>
 	 <mdvrp:sp_impact type="int" min="1" max="20" stepIfEnumerated="1"/>
-	 <mdvrp:tabutenure_size type="int" min="3" max="20" stepIfEnumerated="1"/>
-	 <mdvrp:random_moves type="int" min="1" max="15" stepIfEnumerated="1"/>
+	 <mdvrp:tabutenure_size type="int" min="1" max="20" stepIfEnumerated="1"/>
+	 <mdvrp:random_moves type="int" min="1" max="10" stepIfEnumerated="1"/>
      <mdvrp:ac_percentage type="int" min="50" max="100" stepIfEnumerated="1"/>
      <mdvrp:start_temp type="real" min="1" max="5.0" stepIfEnumerated="0.1"/>
 	 <mdvrp:end_temp type="real" min="0" max="1.0" stepIfEnumerated="0.1"/>
@@ -67,6 +67,8 @@
 	</mdvrp:vrndmv>
 	
         <mdvrp:acceptance>
+	<!--	<or/>
+		<![CDATA[metropolis ]]><mdvrp:metrotemp/><![CDATA[ ]]> -->
 		<![CDATA[saacc ]]><mdvrp:start_temp/><![CDATA[ ]]><mdvrp:end_temp/><![CDATA[ ]]><mdvrp:temp_ratio/><![CDATA[ ]]><mdvrp:tempiterations/><![CDATA[ ]]><mdvrp:metro_alpha/><![CDATA[ ]]>
 		<or/>
 		<![CDATA[test ]]><mdvrp:ac_percentage/><![CDATA[ ]]>
@@ -77,8 +79,6 @@
 	     <![CDATA[moves ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
          <or/>
           <![CDATA[solutions ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
-		 <or/>
-          <![CDATA[value ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
 	     <!--<or/>
 	     <![CDATA[tsabm ]]><mdvrp:tabutenure_size/><![CDATA[ ]]>
 	     <or/>
@@ -90,6 +90,10 @@
     </mdvrp:rndmove>
 
 	
+    <mdvrp:neighborhoodchanger>
+           <![CDATA[accng ]]><mdvrp:acceptance/>
+    </mdvrp:neighborhoodchanger>
+
 	<mdvrp:first>
            <![CDATA[first ]]>
 		  <mdvrp:initial_solution/>
@@ -200,6 +204,7 @@
             	<![CDATA[MDVRP ]]>
 			<mdvrp:nlist/>
         	<mdvrp:main/>     
+			<![CDATA[-it 300]]>
         </mdvrp:main_algorithm>
 
     </gr:derivations>
