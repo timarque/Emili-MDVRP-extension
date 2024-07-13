@@ -1850,7 +1850,9 @@ void emili::mdvrp::Mdvrp2optstarNeighborhood::reset()
 emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Solution* value)
 {
     emili::iteration_increment();
+    bool skip;
     std::vector < int >& newsol = ((emili::mdvrp::SolutionMdvrp*)value)->get_sol();
+
     int size = newsol.size();
     if(sp_iterations >= size - 2)
     {    
@@ -1898,13 +1900,10 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
           sp_iterations ++;
         }
         if (start_position >= size - 3){
-          start_position = 1;
-          start_position2 = 2;
-          end_position = 1;
-          end_position2 = 2;
-
+          start_position = newsol.size();
+          skip = true;
         }
-
+        if (!skip){
         double new_val, new_val2;
         diff_route = false;
         diff_depot = false;
@@ -1953,7 +1952,6 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
           for (int y = route1.size() - 1; y >= 0; y--){
             newsol.insert(newsol.begin() + end_position2 - diff, route1[y]);
           }
-
           bool doable = checkConstraints(newsol);
           if (doable){
             new_val = pis.computeObjectiveFunction(newsol);
@@ -1972,6 +1970,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
               newsol.insert(newsol.begin() + start_position2, route1[r]);
           }
 
+
           std::swap(newsol[start_position2],newsol[end_position]);
           int invert1 = start_position2 + 1;
           int invert2 = end_position - 1;
@@ -1980,6 +1979,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             invert1+=1;
             invert2-=1;
           }
+
           bool doable2 = checkConstraints(newsol);
           if (doable2){
             new_val2 = pis.computeObjectiveFunction(newsol);
@@ -1993,7 +1993,6 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
                   invert1+=1;
                   invert2-=1;
                 }
-                
                 for (int r = 0;r < route1.size(); r++){
                   newsol.erase(newsol.begin() + start_position2);
                 }
@@ -2013,8 +2012,11 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
                 value->setSolutionValue(new_val2);
                 cases = 2;
               }
-            }
-          }else if (doable && !doable2){
+            }else{
+                value->setSolutionValue(new_val2);
+                cases = 2;
+              }
+          }else if (doable){
 
             std::swap(newsol[start_position2],newsol[end_position]);
             int invert1 = start_position2 + 1;
@@ -2038,13 +2040,8 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
           for (int y = route1.size() - 1; y >= 0; y--){
             newsol.insert(newsol.begin() + end_position2 - diff, route1[y]);
           }
-
-
              value->setSolutionValue(new_val);
              cases = 1;
-          }else if (!doable && doable2){
-            value->setSolutionValue(new_val2);
-            cases = 2;
           }else{
             cases = 2;
             value->setSolutionValue(value->getSolutionValue());
@@ -2106,11 +2103,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             invert1+=1;
             invert2-=1;
           }
-          //           std::cout << " initial " << std::endl;
-          // for (int t = 0; t < newsol.size(); t++){
-          //     std::cout << newsol[t] << " ";
-          //   }
-          //   std::cout << std::endl;
+
           if (newsol[invert1] > nb_cust && newsol[invert2] <= nb_cust){
             //std::cout << invert1 << "-" << invert2 << std::endl;
             while (newsol[invert2] <= nb_cust && invert2 > invert1){
@@ -2156,11 +2149,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
                     invert2--;
                   }
                 }
-              //   std::cout << " reversed " << std::endl;
-              // for (int t = 0; t < newsol.size(); t++){
-              //     std::cout << newsol[t] << " ";
-              //   }
-              //   std::cout << std::endl;
+
                 for (int r = 0;r < route1.size(); r++){
                   newsol.erase(newsol.begin() + start_position2);
                 }
@@ -2185,12 +2174,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
                 cases = 3;
             }
           }else if (doable && !doable2){
-            //                   std::cout << " before reversed move 2" << std::endl;
-            //  for (int t = 0; t < newsol.size(); t++){
-            //    std::cout << newsol[t] << " ";
-            //  }
-            // std::cout << std::endl;
-            //std::cout << " bruh " << std::endl;
+
             std::swap(newsol[start_position2],newsol[end_position]);
             int invert1 = start_position2 + 1;
             int invert2 = end_position - 1;
@@ -2243,6 +2227,12 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
           bool doable = false;
           value->setSolutionValue(value->getSolutionValue());
         } 
+        }else{
+          cases = 0;
+          bool doable = false;
+          value->setSolutionValue(value->getSolutionValue());
+        } 
+
         return value;
     }
 }
@@ -2274,38 +2264,38 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
         invert2-=1;
       }
     }else if (diff_route && cases == 3){
+      //  std::cout << start_position2 << " " << end_position << std::endl;
+      // std::cout << newsol[start_position2] << "-" << newsol[end_position] << std::endl;
       std::swap(newsol[start_position2],newsol[end_position]);
-          int invert1 = start_position2 + 1;
-          int invert2 = end_position - 1;
-          while(invert1 < invert2 && newsol[invert1] <= nb_cust && newsol[invert2] <= nb_cust){
-            std::swap(newsol[invert1], newsol[invert2]);
-            invert1+=1;
-            invert2-=1;
-          }
-          if (newsol[invert1] > nb_cust && newsol[invert2] <= nb_cust){
-            while (newsol[invert2] <= nb_cust && invert2 > invert1){
-              int temp = newsol[invert2];
-              newsol.erase(newsol.begin() + invert2);
-              newsol.insert(newsol.begin() + invert1, temp);
-              invert1++;
-            }
-          }else if (newsol[invert1] <= nb_cust && newsol[invert2] > nb_cust){
-            while (newsol[invert1] <= nb_cust && invert1 < invert2){
-              int temp = newsol[invert1];
-              newsol.erase(newsol.begin() + invert1);
-              newsol.insert(newsol.begin() + invert2, temp);
-              invert2--;
-            }
-          }
-          //  std::cout << " reversed rev " << std::endl;
-          //     for (int t = 0; t < newsol.size(); t++){
-          //         std::cout << newsol[t] << " ";
-          //       }
-          //       std::cout << std::endl;
-            //exit(0);
+      int invert1 = start_position2 + 1;
+      int invert2 = end_position - 1;
+      while(invert1 < invert2 && newsol[invert1] <= nb_cust && newsol[invert2] <= nb_cust){
+        std::swap(newsol[invert1], newsol[invert2]);
+        invert1+=1;
+        invert2-=1;
+      }
+      // std::cout << invert1 << " inv " << invert2 << std::endl;
+      // std::cout << newsol[invert1] << "inv n" << newsol[invert2] << std::endl;
+      if (newsol[invert1] > nb_cust && newsol[invert2] <= nb_cust){
+        //std::cout << " here " << std::endl;
+        while (newsol[invert2] <= nb_cust && invert2 > invert1){
+          int temp = newsol[invert2];
+          newsol.erase(newsol.begin() + invert2);
+          newsol.insert(newsol.begin() + invert1, temp);
+          invert1++;
+        }
+      }else if (newsol[invert1] <= nb_cust && newsol[invert2] > nb_cust){
+        //std::cout << " here " << std::endl;
+        while (newsol[invert1] <= nb_cust && invert1 < invert2){
+          int temp = newsol[invert1];
+          newsol.erase(newsol.begin() + invert1);
+          newsol.insert(newsol.begin() + invert2, temp);
+          invert2--;
+        }
+      }
+      // std::cout << invert1 << " end " << invert2 << std::endl;
+      //  std::cout << newsol[invert1] << "end n" << newsol[invert2] << std::endl;
     }
-
-  
 }
 
 bool emili::mdvrp::Mdvrp2optstarNeighborhood::different_route(std::vector <int>& newsol, int best_i, int best_j, int best_i2, int best_j2){
