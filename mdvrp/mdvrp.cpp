@@ -67,32 +67,29 @@ void notyet()
       }
 
       double emili::mdvrp::Mdvrp::computeObjectiveFunction(std::vector<int>& sol){
-        std::vector<std::vector<double>>& distancematrix = instance.getDistanceMatrix();
-        std::vector<int>& depots = instance.getdepots();
-        std::vector<double> route_costs;
-        double route_cost = 0.0;
-        bool end_depot = false;
-        int nb_cust = instance.getnbCustomers();
-        for (int i = 0; i < sol.size(); i++){
-          if (sol[i] > nb_cust){
-            if (!end_depot){
-              end_depot = true;
-              route_cost += distancematrix[sol[i] - 1][sol[i+1] - 1];
-            }else{
-              end_depot = false;
-              route_costs.push_back(route_cost);
-              route_cost = 0.0;
+        auto& distancematrix = instance.getDistanceMatrix();
+            auto nb_cust = instance.getnbCustomers();
+            double total = 0.0;
+            double route_cost = 0.0;
+            bool end_depot = false;
+
+            for (size_t i = 0; i < sol.size() - 1; ++i) {
+                if (sol[i] > nb_cust) {
+                    if (!end_depot) {
+                        end_depot = true;
+                        route_cost += distancematrix[sol[i] - 1][sol[i + 1] - 1];
+                    } else {
+                        end_depot = false;
+                        total += route_cost;
+                        route_cost = 0.0;
+                    }
+                } else {
+                    route_cost += distancematrix[sol[i] - 1][sol[i + 1] - 1];
+                }
             }
-          }else{
-            route_cost += distancematrix[sol[i] - 1][sol[i+1] - 1];
-          }
-        }
-        double total = 0;
-        for (int z = 0; z < route_costs.size(); z++){
-          total += route_costs[z];
-        }
-        
-        return total;
+
+            total += route_cost; 
+            return total;
       }
  
       double emili::mdvrp::Mdvrp::evaluateSolution(Solution& solution) // should just be the lower the distance the better the sol I guess
@@ -1351,7 +1348,10 @@ emili::Solution* emili::mdvrp::MdvrpExchange2Neighborhood::computeStep(emili::So
           end_position2 +=1;
           end_position +=1;
           if (start_position >= size){
-            reset();
+            start_position = 1;
+            start_position2 = 2;
+            end_position = 1;
+            end_position2 = 2;          
             sp_iterations = size - 1;
           }
         }
@@ -1432,6 +1432,7 @@ emili::Solution* emili::mdvrp::MdvrpExchange2Neighborhood::random(Solution *curr
     bool done = false;
     int counter = 0; // counter so that it doesnt stay here infinetly or at least very long, MAYBE REMOVE THIS AT SOME POINT TO CHECK IF MAKES DIFF IN RESULTS
     int size = newsol.size();
+
     while (!done && counter < size / 2 ){
       best_i = (emili::generateRandomNumber()%size); 
       best_j = (emili::generateRandomNumber()%size);
@@ -1510,7 +1511,9 @@ emili::Solution* emili::mdvrp::MdvrpExchange21Neighborhood::computeStep(emili::S
           start_position2 +=1;
           sp_iterations += 1;
           if (start_position2 >= size - 2){
-            reset();
+            start_position = 1;
+            start_position2 = 2;
+            end_position = 2;
             sp_iterations = size - 1;
           }
         }
@@ -1900,9 +1903,11 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
           sp_iterations ++;
         }
         if (start_position >= size - 3){
-          start_position = newsol.size();
+          start_position = size;
+          //sp_iterations = size - 2;
           skip = true;
         }
+
         if (!skip){
         double new_val, new_val2;
         diff_route = false;
@@ -1929,7 +1934,6 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
           }
         }
 
-        cases = 0;
         if (diff_route && !diff_depot){
           for (int t = start_position2; t < index; t++){
             route1.push_back(newsol[t]);
@@ -2017,7 +2021,6 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
                 cases = 2;
               }
           }else if (doable){
-
             std::swap(newsol[start_position2],newsol[end_position]);
             int invert1 = start_position2 + 1;
             int invert2 = end_position - 1;
@@ -2026,7 +2029,6 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
               invert1+=1;
               invert2-=1;
             }
-
             for (int r = 0;r < route1.size(); r++){
             newsol.erase(newsol.begin() + start_position2);
           }
@@ -2047,7 +2049,6 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             value->setSolutionValue(value->getSolutionValue());
           }
         }else if (diff_route && diff_depot){
-          cases = 1;
           // HERERERERERERE 
 
           for (int t = start_position2; t < index; t++){
@@ -2173,7 +2174,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
                 value->setSolutionValue(new_val2);
                 cases = 3;
             }
-          }else if (doable && !doable2){
+          }else if (doable){
 
             std::swap(newsol[start_position2],newsol[end_position]);
             int invert1 = start_position2 + 1;
@@ -2224,12 +2225,9 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
             value->setSolutionValue(value->getSolutionValue());
           }
         }else{
-          bool doable = false;
           value->setSolutionValue(value->getSolutionValue());
         } 
         }else{
-          cases = 0;
-          bool doable = false;
           value->setSolutionValue(value->getSolutionValue());
         } 
 
@@ -2296,6 +2294,7 @@ emili::Solution* emili::mdvrp::Mdvrp2optstarNeighborhood::computeStep(emili::Sol
       // std::cout << invert1 << " end " << invert2 << std::endl;
       //  std::cout << newsol[invert1] << "end n" << newsol[invert2] << std::endl;
     }
+    cases = 0;
 }
 
 bool emili::mdvrp::Mdvrp2optstarNeighborhood::different_route(std::vector <int>& newsol, int best_i, int best_j, int best_i2, int best_j2){
